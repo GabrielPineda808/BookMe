@@ -1,8 +1,7 @@
 package com.example.book.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -11,7 +10,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 @NoArgsConstructor
 @Table(name="users")
 public class User implements UserDetails {
@@ -27,7 +28,7 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Role role = Role.USER;   // default
+    private Role role;
 
     @Column(nullable = false)
     private String first_name;
@@ -47,8 +48,7 @@ public class User implements UserDetails {
 
     private LocalDateTime verification_expiration;
 
-    public User(String created_at, String first_name, String last_name, String email, String password) {
-        this.created_at = created_at;
+    public User(String first_name, String last_name, String email, String password) {
         this.first_name = first_name;
         this.last_name = last_name;
         this.email = email;
