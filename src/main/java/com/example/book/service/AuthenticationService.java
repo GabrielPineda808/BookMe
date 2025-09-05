@@ -1,5 +1,6 @@
 package com.example.book.service;
 
+import com.example.book.dto.LoginUserDto;
 import com.example.book.dto.RegisterUserDto;
 import com.example.book.dto.VerifyUserDto;
 import com.example.book.model.Role;
@@ -7,6 +8,7 @@ import com.example.book.model.User;
 import com.example.book.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -103,5 +105,14 @@ public class AuthenticationService {
         }else{
             throw new RuntimeException("User Not Found");
         }
+    }
+
+    public User authenticate(LoginUserDto input){
+        User user = userRepository.findByEmail(input.getEmail()).orElseThrow(()-> new RuntimeException("User Not Found"));//finding user via email method
+        if(!user.isEnabled()){
+            throw new RuntimeException("Account Not Verified");
+        }
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(input.getEmail(),input.getPassword()));
+        return user;
     }
 }

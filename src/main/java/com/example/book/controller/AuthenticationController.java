@@ -1,8 +1,10 @@
 package com.example.book.controller;
 
+import com.example.book.dto.LoginUserDto;
 import com.example.book.dto.RegisterUserDto;
 import com.example.book.dto.VerifyUserDto;
 import com.example.book.model.User;
+import com.example.book.response.LoginResponse;
 import com.example.book.service.AuthenticationService;
 import com.example.book.service.JwtService;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,14 @@ public class AuthenticationController {
     public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginUserDto loginUserDto){
+        User authenticatedUser = authenticationService.authenticate(loginUserDto);
+        String jwtToken = jwtService.generateToken(authenticatedUser);
+        LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
+        return ResponseEntity.ok(loginResponse);
     }
 
     @PostMapping("/signup")
