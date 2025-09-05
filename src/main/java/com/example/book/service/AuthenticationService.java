@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 import java.util.Random;
 
@@ -29,12 +30,13 @@ public class AuthenticationService {
     }
 
     public User signup(RegisterUserDto input){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         User user = new User(input.getFirst_name(),input.getLast_name(),input.getEmail(),passwordEncoder.encode(input.getPassword()));
         user.setRole(Role.USER);
         user.setVerification_code(generateVerificationCode());
         user.setVerification_expiration(LocalDateTime.now().plusMinutes(5));
         user.setEnabled(false);
-        user.setCreated_at(String.valueOf(LocalDateTime.now()));
+        user.setCreated_at(LocalDateTime.now().format(dtf));
         sendVerificationEmail(user);
         return userRepository.save(user);
     }
@@ -85,5 +87,21 @@ public class AuthenticationService {
         Random random = new Random();
         int code = random.nextInt(900000) + 100000;
         return String.valueOf(code);
+    }
+
+    public void resendVerification(String email){
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        if(optionalUser.isPresent()){
+            User user = optionalUser.get();
+            if(user.isEnabled()){
+                throw new RuntimeException("Account Already Verified");
+            }
+            user.setVerification_code(generateVerificationCode());
+            user.setVerification_expiration(LocalDateTime.now().plusMinutes(5));
+            sendVerificationEmail(user);
+            userRepository.save(user);
+        }else{
+            throw new RuntimeException("User Not Found");
+        }
     }
 }
