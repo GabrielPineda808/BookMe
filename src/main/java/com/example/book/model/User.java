@@ -50,93 +50,37 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Booking> bookings = new ArrayList<>();
 
-    public User(){}
+    @OneToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
 
-    public User(String first_name, String last_name, String email, String password) {
+    @OneToMany(mappedBy = "user")
+    private List<Review> reviews = new ArrayList<>();
+
+    public User() {
+    }
+
+    public User(String password, String email, String first_name, String last_name) {
+        this.password = password;
+        this.email = email;
         this.first_name = first_name;
         this.last_name = last_name;
+    }
+
+    public User(String email, String password, Role role, String first_name, String last_name, String phone, String created_at, boolean enabled, String verification_code, LocalDateTime verification_expiration, List<Booking> bookings, Location location, List<Review> reviews) {
         this.email = email;
         this.password = password;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
         this.role = role;
-    }
-
-    public String getFirst_name() {
-        return first_name;
-    }
-
-    public void setFirst_name(String first_name) {
         this.first_name = first_name;
-    }
-
-    public String getLast_name() {
-        return last_name;
-    }
-
-    public void setLast_name(String last_name) {
         this.last_name = last_name;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(String created_at) {
         this.created_at = created_at;
-    }
-
-    public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    public String getVerification_code() {
-        return verification_code;
-    }
-
-    public void setVerification_code(String verification_code) {
         this.verification_code = verification_code;
-    }
-
-    public LocalDateTime getVerification_expiration() {
-        return verification_expiration;
-    }
-
-    public void setVerification_expiration(LocalDateTime verification_expiration) {
         this.verification_expiration = verification_expiration;
+        this.bookings = bookings;
+        this.location = location;
+        this.reviews = reviews;
     }
 
     @Override

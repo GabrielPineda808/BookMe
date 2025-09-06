@@ -11,6 +11,8 @@ import lombok.Setter;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @OneToMany
+    @JoinColumn(name = "location_id")
     private int id;
 
     @Column(nullable = false)

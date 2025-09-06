@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -27,15 +30,24 @@ public class Service {
     @JoinColumn(name = "location_id")
     private Location location;
 
+    @OneToMany
+    @JoinColumn(name ="reviews")
+    List<Review> reviews = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "bookings")
+    List<Booking> bookings = new ArrayList<>();
+
     public Service() {
     }
 
-    public Service( User user, String handle, String service_name, Location location) {
-
+    public Service(User user, String handle, String service_name, Location location, List<Review> reviews, List<Booking> bookings) {
         this.user = user;
         this.handle = handle;
         this.service_name = service_name;
         this.location = location;
+        this.reviews = reviews;
+        this.bookings = bookings;
     }
 
     public int getServiceId() {
@@ -76,5 +88,21 @@ public class Service {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+
+    public void setReviews(List<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public List<Booking> getBookings() {
+        return bookings;
+    }
+
+    public void setBookings(List<Booking> bookings) {
+        this.bookings = bookings;
     }
 }

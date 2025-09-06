@@ -18,7 +18,7 @@ public class Booking {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
@@ -37,7 +37,7 @@ public class Booking {
     public Booking() {
     }
 
-    public Booking( User user, Service service, BookingStatus bookingStatus, String start, String end, String notes) {
+    public Booking(User user, Service service, BookingStatus bookingStatus, String start, String end, String notes) {
         this.user = user;
         this.service = service;
         this.bookingStatus = bookingStatus;
