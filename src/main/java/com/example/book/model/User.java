@@ -6,14 +6,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
 @Getter
 @Setter
-@RequiredArgsConstructor
-@NoArgsConstructor
 @Table(name="users")
 public class User implements UserDetails {
     @Id
@@ -47,6 +46,9 @@ public class User implements UserDetails {
     private String verification_code;
 
     private LocalDateTime verification_expiration;
+
+    @OneToMany(mappedBy = "user")
+    private List<Booking> bookings = new ArrayList<>();
 
     public User(){}
 
