@@ -2,22 +2,29 @@ package com.example.book.response;
 
 import com.example.book.dto.LocationDto;
 
+import java.time.LocalTime;
+
 public class ServiceResponse {
-    private Long id;
     private String handle;
     private String service_name;
     private String desc;
     private LocationDto location;
-    private String open;
-    private String close;
+    private LocalTime open;
+    private LocalTime close;
     private int interval;
 
-    public Long getId() {
-        return id;
+    public ServiceResponse() {
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public ServiceResponse( String handle, String service_name, String desc, LocationDto location, LocalTime open, LocalTime close, int interval) {
+
+        this.handle = handle;
+        this.service_name = service_name;
+        this.desc = desc;
+        this.location = location;
+        this.open = open;
+        this.close = close;
+        this.interval = interval;
     }
 
     public String getHandle() {
@@ -52,19 +59,19 @@ public class ServiceResponse {
         this.location = location;
     }
 
-    public String getOpen() {
+    public LocalTime getOpen() {
         return open;
     }
 
-    public void setOpen(String open) {
+    public void setOpen(LocalTime open) {
         this.open = open;
     }
 
-    public String getClose() {
+    public LocalTime getClose() {
         return close;
     }
 
-    public void setClose(String close) {
+    public void setClose(LocalTime close) {
         this.close = close;
     }
 
