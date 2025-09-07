@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Entity
 @Getter
 @Setter
@@ -12,13 +15,14 @@ public class Booking {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne @JoinColumn(name = "service_id", nullable = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
     // inside Booking entity
@@ -27,30 +31,25 @@ public class Booking {
     private BookingStatus bookingStatus;
 
     @Column(name = "booking_start", nullable = false)
-    private String start;
+    private LocalTime start;
 
     @Column(name="booking_end", nullable = false)
-    private String end;
+    private LocalTime end;
 
     @Column(name = "notes")
     private String notes;
 
+    @Column(name = "booking_date", nullable = false)
+    private LocalDate date;
+
+
     public Booking() {
     }
 
-    public Booking(User user, Service service, String start, String end) {
-        this.user = user;
-        this.service = service;
+    public Booking(LocalTime start, LocalTime end, LocalDate date) {
         this.start = start;
+        this.date = date;
         this.end = end;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public User getUser() {
@@ -59,6 +58,22 @@ public class Booking {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Service getService() {
@@ -77,19 +92,19 @@ public class Booking {
         this.bookingStatus = bookingStatus;
     }
 
-    public String getStart() {
+    public LocalTime getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(LocalTime start) {
         this.start = start;
     }
 
-    public String getEnd() {
+    public LocalTime getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(LocalTime end) {
         this.end = end;
     }
 

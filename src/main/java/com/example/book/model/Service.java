@@ -1,9 +1,11 @@
 package com.example.book.model;
 
+import com.example.book.dto.LocationDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ import java.util.List;
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int serviceId;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -34,7 +36,7 @@ public class Service {
             @AttributeOverride(name = "area_code",     column = @Column(name = "location_area_code")),
             @AttributeOverride(name = "country", column = @Column(name = "location_country"))
     })
-    private Location location;
+    private LocationDto location;
 
     @Column(name = "description")
     private String desc;
@@ -43,10 +45,10 @@ public class Service {
     private int interval;
 
     @Column(nullable = false)
-    private String open;
+    private LocalTime open;
 
     @Column(nullable = false)
-    private String close;
+    private LocalTime close;
 
     @OneToMany(mappedBy = "service")
     private List<Review> reviews;
@@ -57,8 +59,7 @@ public class Service {
     public Service() {
     }
 
-    public Service(User user, String handle, String service_name, Location location, List<Review> reviews, List<Booking> bookings) {
-        this.user = user;
+    public Service(String handle, String service_name, LocationDto location, List<Review> reviews, List<Booking> bookings) {
         this.handle = handle;
         this.service_name = service_name;
         this.location = location;
@@ -82,28 +83,28 @@ public class Service {
         this.interval = interval;
     }
 
-    public String getOpen() {
+    public LocalTime getOpen() {
         return open;
     }
 
-    public void setOpen(String open) {
+    public void setOpen(LocalTime open) {
         this.open = open;
     }
 
-    public String getClose() {
+    public LocalTime getClose() {
         return close;
     }
 
-    public void setClose(String close) {
+    public void setClose(LocalTime close) {
         this.close = close;
     }
 
-    public int getServiceId() {
-        return serviceId;
+    public Long getId() {
+        return id;
     }
 
-    public void setServiceId(int serviceId) {
-        this.serviceId = serviceId;
+    public void setServiceId(Long id) {
+        this.id = id;
     }
 
     public User getUser() {
@@ -130,11 +131,11 @@ public class Service {
         this.service_name = service_name;
     }
 
-    public Location getLocation() {
+    public LocationDto getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(LocationDto location) {
         this.location = location;
     }
 
