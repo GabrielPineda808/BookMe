@@ -33,7 +33,8 @@ public class AuthenticationService {
 
     public User signup(RegisterUserDto input){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        User user = new User(input.getFirst_name(),input.getLast_name(),input.getEmail(),passwordEncoder.encode(input.getPassword()));
+        User user = new User(passwordEncoder.encode(input.getPassword()),input.getEmail(),input.getFirst_name(),input.getLast_name());
+        user.setLocation(null);
         user.setRole(Role.USER);
         user.setVerification_code(generateVerificationCode());
         user.setVerification_expiration(LocalDateTime.now().plusMinutes(5));
