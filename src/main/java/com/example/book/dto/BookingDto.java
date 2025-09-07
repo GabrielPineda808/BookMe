@@ -7,48 +7,52 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 @Getter
 @Setter
 public class BookingDto {
-    private User user;
 
-    private Service service;
+    private Long serviceId;
 
-    private String start;
+    private LocalTime start;
 
-    private String end;
+    private LocalTime end;
+
+    private LocalDate date;
 
     private String notes;
 
-    public User getUser() {
-        return user;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
-    public Service getService() {
-        return service;
+    public Long getServiceId() {
+        return serviceId;
     }
 
-    public void setService(Service service) {
-        this.service = service;
+    public void setServiceId(Long serviceId) {
+        this.serviceId = serviceId;
     }
 
-    public String getStart() {
+    public LocalTime getStart() {
         return start;
     }
 
-    public void setStart(String start) {
+    public void setStart(LocalTime start) {
         this.start = start;
     }
 
-    public String getEnd() {
+    public LocalTime getEnd() {
         return end;
     }
 
-    public void setEnd(String end) {
+    public void setEnd(LocalTime end) {
         this.end = end;
     }
 

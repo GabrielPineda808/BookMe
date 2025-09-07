@@ -6,21 +6,23 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 
+import java.time.LocalTime;
+
 public class ServiceDto {
 
     private String handle;
 
     private String service_name;
 
-    private Location location;
+    private LocationDto location;
 
     private String desc;
 
-    private @Pattern(regexp="^\\d{2}:\\d{2}$") String open;
+    private LocalTime open;
 
-    @Min(5) @Max(240) private @Pattern(regexp="^\\d{2}:\\d{2}$") String close;
+    private LocalTime close;
 
-    private int interval;
+    @Min(5) @Max(240) private int interval;
 
     public int getInterval() {
         return interval;
@@ -30,19 +32,19 @@ public class ServiceDto {
         this.interval = interval;
     }
 
-    public String getOpen() {
+    public LocalTime getOpen() {
         return open;
     }
 
-    public void setOpen(String open) {
+    public void setOpen(LocalTime open) {
         this.open = open;
     }
 
-    public String getClose() {
+    public LocalTime getClose() {
         return close;
     }
 
-    public void setClose(String close) {
+    public void setClose(LocalTime close) {
         this.close = close;
     }
 
@@ -70,11 +72,11 @@ public class ServiceDto {
         this.service_name = service_name;
     }
 
-    public Location getLocation() {
+    public LocationDto getLocation() {
         return location;
     }
 
-    public void setLocation(Location location) {
+    public void setLocation(LocationDto location) {
         this.location = location;
     }
 
