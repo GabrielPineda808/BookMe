@@ -48,14 +48,20 @@ public class User implements UserDetails {
     private LocalDateTime verification_expiration;
 
     @OneToMany(mappedBy = "user")
-    private List<Booking> bookings = new ArrayList<>();
-
-    @OneToOne
-    @JoinColumn(name = "location_id")
-    private Location location;
+    private List<Booking> bookings;
 
     @OneToMany(mappedBy = "user")
-    private List<Review> reviews = new ArrayList<>();
+    private List<Review> reviews;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "address",  column = @Column(name = "location_address")),
+            @AttributeOverride(name = "city",    column = @Column(name = "location_city")),
+            @AttributeOverride(name = "state",   column = @Column(name = "location_state")),
+            @AttributeOverride(name = "area_code",     column = @Column(name = "location_area_code")),
+            @AttributeOverride(name = "country", column = @Column(name = "location_country"))
+    })
+    private Location location;
 
     public User() {
     }

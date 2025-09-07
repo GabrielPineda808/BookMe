@@ -18,11 +18,12 @@ public class Booking {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "service_id", nullable = false)
+    @ManyToOne @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
-    @Column(name = "status", nullable = false)
+    // inside Booking entity
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")   // keep your existing name if different
     private BookingStatus bookingStatus;
 
     @Column(name = "booking_start", nullable = false)
@@ -37,13 +38,11 @@ public class Booking {
     public Booking() {
     }
 
-    public Booking(User user, Service service, BookingStatus bookingStatus, String start, String end, String notes) {
+    public Booking(User user, Service service, String start, String end) {
         this.user = user;
         this.service = service;
-        this.bookingStatus = bookingStatus;
         this.start = start;
         this.end = end;
-        this.notes = notes;
     }
 
     public int getId() {

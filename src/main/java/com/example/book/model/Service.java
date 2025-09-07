@@ -26,17 +26,33 @@ public class Service {
     @Column(nullable = false)
     private String service_name;
 
-    @OneToOne
-    @JoinColumn(name = "location_id")
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "address",  column = @Column(name = "location_address")),
+            @AttributeOverride(name = "city",    column = @Column(name = "location_city")),
+            @AttributeOverride(name = "state",   column = @Column(name = "location_state")),
+            @AttributeOverride(name = "area_code",     column = @Column(name = "location_area_code")),
+            @AttributeOverride(name = "country", column = @Column(name = "location_country"))
+    })
     private Location location;
 
-    @OneToMany
-    @JoinColumn(name ="reviews")
-    List<Review> reviews = new ArrayList<>();
+    @Column(name = "description")
+    private String desc;
 
-    @OneToMany
-    @JoinColumn(name = "bookings")
-    List<Booking> bookings = new ArrayList<>();
+    @Column(nullable = false)
+    private int interval;
+
+    @Column(nullable = false)
+    private String open;
+
+    @Column(nullable = false)
+    private String close;
+
+    @OneToMany(mappedBy = "service")
+    private List<Review> reviews;
+
+    @OneToMany(mappedBy = "service")
+    private List<Booking> bookings;
 
     public Service() {
     }
@@ -48,6 +64,38 @@ public class Service {
         this.location = location;
         this.reviews = reviews;
         this.bookings = bookings;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
+
+    public String getOpen() {
+        return open;
+    }
+
+    public void setOpen(String open) {
+        this.open = open;
+    }
+
+    public String getClose() {
+        return close;
+    }
+
+    public void setClose(String close) {
+        this.close = close;
     }
 
     public int getServiceId() {

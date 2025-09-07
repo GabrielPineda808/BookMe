@@ -4,43 +4,39 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
+@Embeddable
 @Getter
 @Setter
 @Table(name="location")
 public class Location {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
 
-    @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false)
     private String country;
 
-    @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
     private String area_code;
+
+    private String state;
 
     public Location() {
     }
 
-    public Location(String city, String country, String address, String area_code) {
+    public Location(String city, String country, String address, String area_code,String state) {
         this.city = city;
         this.country = country;
         this.address = address;
         this.area_code = area_code;
+        this.state = state;
     }
 
-    public int getId() {
-        return id;
+    public String getState() {
+        return state;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setState(String state) {
+        this.state = state;
     }
 
     public String getCity() {

@@ -12,12 +12,11 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne
-    @JoinColumn(name="service_id", nullable = false)
+    @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
     private int rating;
