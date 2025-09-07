@@ -1,5 +1,6 @@
 package com.example.book.service;
 
+import com.example.book.dto.LocationDto;
 import com.example.book.dto.ServiceDto;
 import com.example.book.model.Location;
 import com.example.book.model.User;
@@ -33,7 +34,7 @@ public class ServiceService {
         service.setClose(input.getClose());
         service.setInterval(input.getInterval());
         if (input.getLocation() != null) {
-            Location loc = new Location();
+            LocationDto loc = new LocationDto();
             loc.setAddress(input.getLocation().getAddress());
             loc.setCity(input.getLocation().getCity());
             loc.setState(input.getLocation().getState());
