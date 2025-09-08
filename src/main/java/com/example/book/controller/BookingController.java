@@ -32,11 +32,12 @@ public class BookingController {
 
         BookingResponse bookingResponse = new BookingResponse();
 
+        bookingResponse.setId(booking.getId());
         bookingResponse.setServiceId(booking.getService().getId());
         bookingResponse.setDate(booking.getDate());
         bookingResponse.setStart(booking.getStart());
         bookingResponse.setEnd(booking.getEnd());
-        bookingResponse.setStatus(booking.getBookingStatus());
+        bookingResponse.setStatus(booking.getStatus());
 
 
         System.out.println("end booking");
