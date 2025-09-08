@@ -1,16 +1,17 @@
 package com.example.book.dto;
 
 public class ReviewDto {
-    private Long serviceId;
+    private Long bookingId;;
     private Long rating;
     private String comment;
 
-    public Long getServiceId() {
-        return serviceId;
+
+    public Long getBookingId() {
+        return bookingId;
     }
 
-    public void setServiceId(Long serviceId) {
-        this.serviceId = serviceId;
+    public void setBookingId(Long bookingId) {
+        this.bookingId = bookingId;
     }
 
     public Long getRating() {
