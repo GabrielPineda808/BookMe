@@ -27,4 +27,15 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             @Param("start") LocalTime start,
             @Param("end") LocalTime end
     );
+
+    @Query("""
+    SELECT (count(b.id) > 0)
+    FROM Booking b
+    WHERE b.service.id = :serviceId
+    AND b.user.id = :userId
+    AND b.status = "CONFIRMED"
+    AND b.booking_date > b.booking_date -1
+    AND b.booking_end < :currentTime
+            """)
+    boolean bookingExists(@Param("serviceId") Long serviceId,@Param("userId") Long userId, @Param("currentTime") LocalTime currentTime);
 }
