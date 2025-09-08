@@ -1,6 +1,8 @@
 package com.example.book.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +21,11 @@ public class Review {
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
-    private Long rating;
+    @ManyToOne
+    @JoinColumn(name = "booking_id")
+    private Booking booking;
+
+    @Min(1) @Max(5) private Long rating;
 
     private String comment;
 
@@ -31,6 +37,14 @@ public class Review {
         this.service = service;
         this.rating = rating;
         this.comment = comment;
+    }
+
+    public Booking getBooking() {
+        return booking;
+    }
+
+    public void setBooking(Booking booking) {
+        this.booking = booking;
     }
 
     public Long getId() {
