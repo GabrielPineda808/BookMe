@@ -54,7 +54,7 @@ CREATE INDEX idx_service_handle  ON service(handle);
 CREATE TABLE review (
     id                          SERIAL PRIMARY KEY,
     user_id                     BIGINT  NOT NULL,
-    service_id                  INTEGER NOT NULL,
+    service_id                  BIGINT NOT NULL,
     rating                      INTEGER,
     comment                     TEXT,
 
@@ -71,7 +71,7 @@ CREATE INDEX idx_review_service ON review(service_id);
 CREATE TABLE booking (
     id                          SERIAL PRIMARY KEY,
     user_id                     BIGINT  NOT NULL,
-    service_id                  INTEGER NOT NULL,
+    service_id                  BIGINT NOT NULL,
 
     status                      VARCHAR(50) NOT NULL,               -- Enum stored as STRING (BookingStatus)
     booking_start               VARCHAR(255) NOT NULL,
