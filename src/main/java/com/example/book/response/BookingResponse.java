@@ -6,11 +6,20 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public class BookingResponse {
+    private long id;
     private Long serviceId;
     private LocalDate date;
     private LocalTime start;
     private LocalTime end;
     private BookingStatus status;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public Long getServiceId() {
         return serviceId;
