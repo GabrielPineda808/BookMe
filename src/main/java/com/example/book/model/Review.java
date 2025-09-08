@@ -10,7 +10,7 @@ import lombok.Setter;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @ManyToOne @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -19,25 +19,25 @@ public class Review {
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
-    private int rating;
+    private Long rating;
 
     private String comment;
 
     public Review() {
     }
 
-    public Review(User user, Service service, int rating, String comment) {
+    public Review(User user, Service service, Long rating, String comment) {
         this.user = user;
         this.service = service;
         this.rating = rating;
         this.comment = comment;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -57,11 +57,11 @@ public class Review {
         this.service = service;
     }
 
-    public int getRating() {
+    public Long getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(Long rating) {
         this.rating = rating;
     }
 
