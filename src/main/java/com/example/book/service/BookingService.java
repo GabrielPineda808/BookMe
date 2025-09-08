@@ -35,8 +35,12 @@ public class BookingService {
         User owner = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        System.out.println("User found");
+
         com.example.book.model.Service service = serviceRepository.findById(input.getServiceId())
                 .orElseThrow(()-> new RuntimeException("Service Not Found"));
+
+
 
         boolean overlaps = bookingRepository.existsOverlapping(
                 service.getId(),input.getDate(), input.getStart(), input.getEnd());
@@ -52,7 +56,7 @@ public class BookingService {
         booking.setEnd(input.getEnd());
         booking.setUser(owner);
         booking.setNotes(input.getNotes());
-        booking.setBookingStatus(BookingStatus.PENDING);
+        booking.setStatus(BookingStatus.PENDING);
 
         bookingRepository.save(booking);
         System.out.println("saving booking");
