@@ -2,6 +2,7 @@ package com.example.book.controller;
 
 import com.example.book.dto.ReviewDto;
 import com.example.book.model.Review;
+import com.example.book.response.ReviewResponse;
 import com.example.book.service.ReviewService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +22,15 @@ public class ReviewController {
 
     @PostMapping("/review")
     public ResponseEntity<?> createReview(@RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){
+        System.out.println("createReview controller");
         Review review = reviewService.createReview(input, email);
-        return ResponseEntity.ok(review);
+        ReviewResponse response = new ReviewResponse();
+
+        response.setComment(review.getComment());
+        response.setRating(review.getRating());
+        response.setReview_id(review.getId());
+        response.setService_id(review.getService().getId());
+
+        return ResponseEntity.ok(response);
     }
 }
