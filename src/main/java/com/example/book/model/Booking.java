@@ -28,7 +28,7 @@ public class Booking {
     // inside Booking entity
     @Enumerated(EnumType.STRING)
     @Column(name = "status")   // keep your existing name if different
-    private BookingStatus bookingStatus;
+    private BookingStatus status;
 
     @Column(name = "booking_start", nullable = false)
     private LocalTime start;
@@ -50,6 +50,14 @@ public class Booking {
         this.start = start;
         this.date = date;
         this.end = end;
+    }
+
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
     }
 
     public User getUser() {
@@ -82,14 +90,6 @@ public class Booking {
 
     public void setService(Service service) {
         this.service = service;
-    }
-
-    public BookingStatus getBookingStatus() {
-        return bookingStatus;
-    }
-
-    public void setBookingStatus(BookingStatus bookingStatus) {
-        this.bookingStatus = bookingStatus;
     }
 
     public LocalTime getStart() {
