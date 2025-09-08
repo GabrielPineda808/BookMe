@@ -2,6 +2,8 @@ package com.example.book.model;
 
 import com.example.book.dto.LocationDto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -42,7 +44,7 @@ public class Service {
     private String desc;
 
     @Column(nullable = false)
-    private int interval;
+    @Min(5) @Max(240) private int interval;
 
     @Column(nullable = false)
     private LocalTime open;
