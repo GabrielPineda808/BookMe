@@ -10,8 +10,10 @@ import com.example.book.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Service
 public class BookingService {
@@ -32,6 +34,8 @@ public class BookingService {
             throw new IllegalArgumentException("End time must be after start time.");
         }
 
+        //Booking is within service hours
+
         User owner = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
@@ -43,7 +47,7 @@ public class BookingService {
 
 
         boolean overlaps = bookingRepository.existsOverlapping(
-                service.getId(),input.getDate(), input.getStart(), input.getEnd());
+                service.getId(),input.getDate(), input.getStart(), input.getEnd(), BookingStatus.CONFIRMED);
 
         if (overlaps) {
             throw new IllegalStateException("Time slot overlaps an existing booking.");
@@ -61,5 +65,132 @@ public class BookingService {
         bookingRepository.save(booking);
         System.out.println("saving booking");
         return booking;
+    }
+
+    @Transactional
+    public Booking accept(Long id, String email){
+        System.out.println("Start");
+        Booking booking = bookingRepository.findById(id).orElseThrow(()->new RuntimeException("Booking Not Found"));
+        User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        com.example.book.model.Service service = booking.getService();
+
+        //Booking still pending check
+        if(!booking.getStatus().equals(BookingStatus.PENDING)){
+            System.out.println(1);
+            throw new IllegalArgumentException("Booking has either been CONFIRMED, DECLINE or CANCELLED");
+        }
+
+        // checking that booking has not passed booking date requested & the time is an hour befoer booking minimum
+        //Advance acceptance buffer
+        //
+        //I already enforce a minimum 1-hour buffer. In the future Some services require more (e.g. 24 hours for catering).
+        //When i create services i may need to add what their minimum booking buffer is so that we dont display available booking times to the customer
+        //that do not align with its minimum prep time.
+        // allow accepting only if it's at least 60 min before start
+        // Lead-time / already-ended check
+
+        LocalDateTime now   = LocalDateTime.now(); // use ZonedDateTime if TZ matters
+        LocalDateTime start = LocalDateTime.of(booking.getDate(), booking.getStart());
+        LocalDateTime end   = LocalDateTime.of(booking.getDate(), booking.getEnd());
+
+        if (now.isAfter(end) || !now.isBefore(start.minusHours(1))) {
+            booking.setStatus(BookingStatus.DECLINED);
+            bookingRepository.save(booking);
+            return booking;
+        }
+
+        // Service constraints
+        LocalTime open  = service.getOpen();
+        LocalTime close = service.getClose();
+        int intervalMin = service.getInterval();
+        if (intervalMin <= 0) {
+            throw new IllegalStateException("Service interval must be > 0");
+        }
+
+        // Within hours (inclusive)
+        LocalTime bStart = booking.getStart();
+        LocalTime bEnd   = booking.getEnd();
+        if (bStart.isBefore(open) || bEnd.isAfter(close)) {
+            throw new IllegalArgumentException("Booking time is outside service hours");
+        }
+
+        // Duration must be positive
+        long durationMin = Duration.between(bStart, bEnd).toMinutes();
+        if (durationMin <= 0) {
+            throw new IllegalArgumentException("End must be after start");
+        }
+
+        // Start must align to interval grid from 'open'
+        long minutesFromOpen = Duration.between(open, bStart).toMinutes();
+        if (Math.floorMod(minutesFromOpen, intervalMin) != 0) {
+            throw new IllegalArgumentException("Start time not aligned to interval");
+        }
+
+        // Duration must align to interval (allow multi-slot)
+        if (durationMin % intervalMin != 0) {
+            throw new IllegalArgumentException("Duration must be a multiple of the interval");
+        }
+
+        //checking wether service booked is owned by user
+        if(!booking.getService().getUser().getId().equals(owner.getId())){
+            System.out.println(3);
+            throw new IllegalArgumentException("Booking does not belong to service owner.");
+        }
+
+
+//        //Booking is within service hours
+//        //Booking duration matches service intervals
+//
+//        Duration duration = Duration.between(booking.getStart(), booking.getEnd());
+//
+//        System.out.println(duration.toMinutes());
+//
+//        if(!((booking.getStart().isAfter(service.getOpen().minusMinutes(1)) && booking.getEnd().isBefore(service.getClose().plusMinutes(1))) && ((duration.toMinutes() != service.getInterval())))){
+//            System.out.println(4);
+//            throw new IllegalArgumentException("Booking Time Not In Range");
+//        }
+
+        //No overlapping accepted booking for the same service
+        boolean overlaps = bookingRepository.existsOverlapping(
+                service.getId(),booking.getDate(), booking.getStart(), booking.getEnd(), BookingStatus.CONFIRMED);
+
+        //checking if bookings overlap
+        if (overlaps) {
+            System.out.println(5);
+            throw new IllegalStateException("Time slot overlaps an existing booking.");
+        }
+
+        //User account is active
+        if(!owner.isEnabled()){
+            System.out.println(6);
+            throw new RuntimeException("User Not Active");
+        }
+
+        // Capacity / Resource Validation
+        //
+        //Resource availability
+        //
+        //If services can be tied to a physical resource (room, field, chair, equipment), ensure that resource isn’t already in use for the requested time.
+        //
+        //Max concurrent bookings per owner/service
+        //
+        //If owners can accept multiple bookings (e.g., multiple staff under one account), check that the service isn’t over capacity.
+        //
+        //Extra Safety & Logging
+        //
+        //Prevent race conditions
+        //
+        //If two owners/admins act on the same booking at the same time, ensure only one action succeeds.
+        //
+        //Do this with an @Transactional service layer method and check booking status right before updating.
+        //
+        //Audit/log acceptance
+        //
+        //Log who accepted the booking and when, so disputes can be resolved.
+
+        booking.setStatus(BookingStatus.CONFIRMED);
+        System.out.println("End");
+        return bookingRepository.save(booking);
+
     }
 }
