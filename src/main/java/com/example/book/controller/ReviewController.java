@@ -22,15 +22,7 @@ public class ReviewController {
 
     @PostMapping("/review")
     public ResponseEntity<?> createReview(@RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){
-        System.out.println("createReview controller");
         Review review = reviewService.createReview(input, email);
-        ReviewResponse response = new ReviewResponse();
-
-        response.setComment(review.getComment());
-        response.setRating(review.getRating());
-        response.setReview_id(review.getId());
-        response.setService_id(review.getService().getId());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ReviewResponse.from(review));
     }
 }

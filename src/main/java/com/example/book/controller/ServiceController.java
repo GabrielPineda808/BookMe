@@ -1,8 +1,12 @@
 package com.example.book.controller;
 
 import com.example.book.dto.ServiceDto;
+import com.example.book.model.Booking;
 import com.example.book.model.Service;
+import com.example.book.repository.BookingRepository;
+import com.example.book.response.BookingResponse;
 import com.example.book.response.ServiceResponse;
+import com.example.book.service.BookingService;
 import com.example.book.service.ServiceService;
 import org.springframework.context.annotation.Role;
 import org.springframework.http.ResponseEntity;
@@ -20,22 +24,14 @@ import java.util.Optional;
 public class ServiceController {
     private final ServiceService service;
 
-    public ServiceController(ServiceService service) {
+    public ServiceController(ServiceService service, BookingService bookingService) {
         this.service = service;
     }
 
     @PostMapping("/create")
     public ResponseEntity<?> createService(@RequestBody ServiceDto input, @AuthenticationPrincipal(expression = "username") String email){
         Service service1 = service.createService(input, email);
-        ServiceResponse response = new ServiceResponse();
-        response.setClose(service1.getClose());
-        response.setService_name(service1.getService_name());
-        response.setClose(service1.getClose());
-        response.setDesc(service1.getDesc());
-        response.setHandle(service1.getHandle());
-        response.setLocation(service1.getLocation());
-        response.setInterval(service1.getInterval());
 
-        return ResponseEntity.ok(service1);
+        return ResponseEntity.ok(ServiceResponse.fromService(service1));
     }
 }

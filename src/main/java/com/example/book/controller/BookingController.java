@@ -26,22 +26,16 @@ public class BookingController {
 
     @PostMapping("/book")
     public ResponseEntity<?> bookService(@RequestBody BookingDto input, @AuthenticationPrincipal(expression = "username") String email){
-
-        System.out.println("start booking");
         Booking booking = bookingService.createBooking(input, email);
+        return ResponseEntity.ok(BookingResponse.fromBooking(booking));
+    }
 
-        BookingResponse bookingResponse = new BookingResponse();
+    @PostMapping("/{id}/accept")
+    public ResponseEntity<?> acceptBooking(@PathVariable Long id , @AuthenticationPrincipal(expression = "username") String email){
 
-        bookingResponse.setId(booking.getId());
-        bookingResponse.setServiceId(booking.getService().getId());
-        bookingResponse.setDate(booking.getDate());
-        bookingResponse.setStart(booking.getStart());
-        bookingResponse.setEnd(booking.getEnd());
-        bookingResponse.setStatus(booking.getStatus());
+        Booking booking = bookingService.accept(id, email);
 
-
-        System.out.println("end booking");
-        return ResponseEntity.ok(bookingResponse);
+        return ResponseEntity.ok(BookingResponse.fromBooking(booking));
     }
 
 }
