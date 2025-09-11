@@ -1,30 +1,57 @@
 package com.example.book.response;
 
 import com.example.book.dto.LocationDto;
+import com.example.book.model.Service;
+import com.example.book.model.Review;
+
 
 import java.time.LocalTime;
 
 public class ServiceResponse {
+    private Long id;
     private String handle;
-    private String service_name;
-    private String desc;
-    private LocationDto location;
-    private LocalTime open;
-    private LocalTime close;
-    private int interval;
+    private String name;
+    private String description;
+    private LocationDto location; // your existing small DTO
+    private String open;          // "09:00" (or LocalTime serialized)
+    private String close;         // "17:00"
+    private int intervalMinutes;  // rename to say “minutes”
+    // Nice-to-haves:
+    private Double averageRating;
+    private Integer reviewCount;
 
-    public ServiceResponse() {
+    public static ServiceResponse fromService(Service service){
+        if (service == null) return null;
+
+        ServiceResponse dto = new ServiceResponse();
+
+        double avgRating = service.getReviews().stream()
+                .mapToLong(Review::getRating)
+                .average()
+                .orElse(0.0);  // fallback if no reviews
+
+
+
+        dto.setLocation(service.getLocation());
+        dto.setDescription(service.getDesc());
+        dto.setHandle(service.getHandle());
+        dto.setName(service.getService_name());
+        dto.setClose(service.getClose().toString());
+        dto.setId(service.getId());
+        dto.setIntervalMinutes(service.getInterval());
+        dto.setOpen(service.getOpen().toString());
+        dto.setReviewCount(service.getReviews().size());
+        dto.setAverageRating(avgRating);
+
+        return dto;
     }
 
-    public ServiceResponse( String handle, String service_name, String desc, LocationDto location, LocalTime open, LocalTime close, int interval) {
+    public Long getId() {
+        return id;
+    }
 
-        this.handle = handle;
-        this.service_name = service_name;
-        this.desc = desc;
-        this.location = location;
-        this.open = open;
-        this.close = close;
-        this.interval = interval;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getHandle() {
@@ -35,20 +62,20 @@ public class ServiceResponse {
         this.handle = handle;
     }
 
-    public String getService_name() {
-        return service_name;
+    public String getName() {
+        return name;
     }
 
-    public void setService_name(String service_name) {
-        this.service_name = service_name;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getDesc() {
-        return desc;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public LocationDto getLocation() {
@@ -59,27 +86,43 @@ public class ServiceResponse {
         this.location = location;
     }
 
-    public LocalTime getOpen() {
+    public String getOpen() {
         return open;
     }
 
-    public void setOpen(LocalTime open) {
+    public void setOpen(String open) {
         this.open = open;
     }
 
-    public LocalTime getClose() {
+    public String getClose() {
         return close;
     }
 
-    public void setClose(LocalTime close) {
+    public void setClose(String close) {
         this.close = close;
     }
 
-    public int getInterval() {
-        return interval;
+    public int getIntervalMinutes() {
+        return intervalMinutes;
     }
 
-    public void setInterval(int interval) {
-        this.interval = interval;
+    public void setIntervalMinutes(int intervalMinutes) {
+        this.intervalMinutes = intervalMinutes;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Integer getReviewCount() {
+        return reviewCount;
+    }
+
+    public void setReviewCount(Integer reviewCount) {
+        this.reviewCount = reviewCount;
     }
 }
