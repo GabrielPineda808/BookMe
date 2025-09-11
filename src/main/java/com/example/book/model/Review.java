@@ -6,6 +6,8 @@ import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -29,6 +31,8 @@ public class Review {
 
     private String comment;
 
+    private LocalDateTime createdAt = LocalDateTime.now();
+
     public Review() {
     }
 
@@ -37,6 +41,14 @@ public class Review {
         this.service = service;
         this.rating = rating;
         this.comment = comment;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public Booking getBooking() {
