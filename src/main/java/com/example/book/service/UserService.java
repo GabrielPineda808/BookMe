@@ -1,6 +1,7 @@
 package com.example.book.service;
 
 import com.example.book.dto.BookingDto;
+import com.example.book.dto.UserDto;
 import com.example.book.model.Booking;
 import com.example.book.model.BookingStatus;
 import com.example.book.model.User;
@@ -22,10 +23,6 @@ public class UserService {
         this.bookingService = bookingService;
     }
 
-    public ResponseEntity<?> createBooking(BookingDto input, String email){
-        Booking booking = bookingService.createBooking(input, email);
-        return ResponseEntity.ok(booking);
-    }
 
     public List<Booking> getAllBookings(String email){
         Optional<User> optionalUser = userRepository.findByEmail(email);
@@ -36,5 +33,16 @@ public class UserService {
         }else {
             return null;
         }
+    }
+
+    public User updateUser(UserDto input, String email){
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+
+        user.setFirst_name(input.getFirst_name());
+        user.setLast_name(input.getLast_name());
+        user.setLocation(input.getLocation());
+
+        return userRepository.save(user);
+
     }
 }
