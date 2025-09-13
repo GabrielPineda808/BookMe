@@ -98,7 +98,7 @@ public class BookingService {
 
     public Boolean bookingChecks(Booking booking, User owner, com.example.book.model.Service service){
         //Booking still pending check
-        if(!booking.getStatus().equals(BookingStatus.PENDING)){
+        if(!booking.getStatus().equals(BookingStatus.PENDING) || !booking.getStatus().equals(BookingStatus.CONFIRMED)){
             throw new IllegalArgumentException("Booking has either been CONFIRMED, DECLINE or CANCELLED");
         }
 
