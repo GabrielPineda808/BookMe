@@ -11,7 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -47,7 +46,7 @@ public class BookingService {
 
 
         boolean overlaps = bookingRepository.existsOverlapping(
-                service.getId(),input.getDate(), input.getStart(), input.getEnd(), BookingStatus.CONFIRMED);
+                service.getId(),input.getDate(), input.getStart(), input.getEnd());
 
         if (overlaps) {
             throw new IllegalStateException("Time slot overlaps an existing booking.");
@@ -68,15 +67,38 @@ public class BookingService {
     }
 
     @Transactional
-    public Booking accept(Long id, String email){
-        System.out.println("Start");
+    public Booking manageBooking(Long id, String email, String action){
         Booking booking = bookingRepository.findById(id).orElseThrow(()->new RuntimeException("Booking Not Found"));
         User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
         com.example.book.model.Service service = booking.getService();
 
+        if(bookingChecks(booking,owner,service)) {
+            //checking wether service booked is owned by user
+            boolean serviceOwner = booking.getService().getUser().getId().equals(owner.getId());
+            if(!serviceOwner){
+                if(action.equals("cancel")){
+                    booking.setStatus(BookingStatus.CANCELLED);
+                    return bookingRepository.save(booking);
+                }
+                throw new IllegalArgumentException("Booking does not belong to service owner.");
+            }else {
+                if (action.equals("accept")) {
+                    booking.setStatus(BookingStatus.CONFIRMED);
+                } else if (action.equals("decline")) {
+                    booking.setStatus(BookingStatus.DECLINED);
+                } else if (action.equals("cancel")) {
+                    booking.setStatus(BookingStatus.CANCELLED);
+                }
+                return bookingRepository.save(booking);
+            }
+        }else {
+            throw new RuntimeException("Booking Management Not Available");
+        }
+    }
+
+    public Boolean bookingChecks(Booking booking, User owner, com.example.book.model.Service service){
         //Booking still pending check
         if(!booking.getStatus().equals(BookingStatus.PENDING)){
-            System.out.println(1);
             throw new IllegalArgumentException("Booking has either been CONFIRMED, DECLINE or CANCELLED");
         }
 
@@ -94,9 +116,8 @@ public class BookingService {
         LocalDateTime end   = LocalDateTime.of(booking.getDate(), booking.getEnd());
 
         if (now.isAfter(end) || !now.isBefore(start.minusHours(1))) {
-            booking.setStatus(BookingStatus.DECLINED);
+            booking.setStatus(BookingStatus.EXPIRED);
             bookingRepository.save(booking);
-            return booking;
         }
 
         // Service constraints
@@ -131,38 +152,17 @@ public class BookingService {
             throw new IllegalArgumentException("Duration must be a multiple of the interval");
         }
 
-        //checking wether service booked is owned by user
-        if(!booking.getService().getUser().getId().equals(owner.getId())){
-            System.out.println(3);
-            throw new IllegalArgumentException("Booking does not belong to service owner.");
-        }
-
-
-//        //Booking is within service hours
-//        //Booking duration matches service intervals
-//
-//        Duration duration = Duration.between(booking.getStart(), booking.getEnd());
-//
-//        System.out.println(duration.toMinutes());
-//
-//        if(!((booking.getStart().isAfter(service.getOpen().minusMinutes(1)) && booking.getEnd().isBefore(service.getClose().plusMinutes(1))) && ((duration.toMinutes() != service.getInterval())))){
-//            System.out.println(4);
-//            throw new IllegalArgumentException("Booking Time Not In Range");
-//        }
-
         //No overlapping accepted booking for the same service
         boolean overlaps = bookingRepository.existsOverlapping(
-                service.getId(),booking.getDate(), booking.getStart(), booking.getEnd(), BookingStatus.CONFIRMED);
+                service.getId(),booking.getDate(), booking.getStart(), booking.getEnd());
 
         //checking if bookings overlap
         if (overlaps) {
-            System.out.println(5);
             throw new IllegalStateException("Time slot overlaps an existing booking.");
         }
 
         //User account is active
         if(!owner.isEnabled()){
-            System.out.println(6);
             throw new RuntimeException("User Not Active");
         }
 
@@ -187,10 +187,6 @@ public class BookingService {
         //Audit/log acceptance
         //
         //Log who accepted the booking and when, so disputes can be resolved.
-
-        booking.setStatus(BookingStatus.CONFIRMED);
-        System.out.println("End");
-        return bookingRepository.save(booking);
-
+        return true;
     }
 }
