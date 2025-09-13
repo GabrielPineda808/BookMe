@@ -12,11 +12,10 @@ public class ServiceResponse {
     private String handle;
     private String name;
     private String description;
-    private LocationDto location; // your existing small DTO
-    private String open;          // "09:00" (or LocalTime serialized)
-    private String close;         // "17:00"
-    private int intervalMinutes;  // rename to say “minutes”
-    // Nice-to-haves:
+    private LocationDto location;
+    private String open;
+    private String close;
+    private int intervalMinutes;
     private Double averageRating;
     private Integer reviewCount;
 
