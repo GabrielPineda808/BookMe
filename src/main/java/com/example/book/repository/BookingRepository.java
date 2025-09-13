@@ -21,14 +21,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
       and b.status in (com.example.book.model.BookingStatus.PENDING, com.example.book.model.BookingStatus.CONFIRMED)
       and b.start < :end
       and b.end   > :start
-      and b.status = :status
     """)
     boolean existsOverlapping(
             @Param("serviceId") Long serviceId,
             @Param("date") LocalDate date,
             @Param("start") LocalTime start,
-            @Param("end") LocalTime end,
-            @Param("status") BookingStatus status
+            @Param("end") LocalTime end
     );
 
     @Query("""
