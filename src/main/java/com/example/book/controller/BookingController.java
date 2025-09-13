@@ -27,15 +27,27 @@ public class BookingController {
     @PostMapping("/book")
     public ResponseEntity<?> bookService(@RequestBody BookingDto input, @AuthenticationPrincipal(expression = "username") String email){
         Booking booking = bookingService.createBooking(input, email);
-        return ResponseEntity.ok(BookingResponse.fromBooking(booking));
+        return ResponseEntity.ok(BookingResponse.fromBooking(booking, email));
     }
 
     @PostMapping("/{id}/accept")
     public ResponseEntity<?> acceptBooking(@PathVariable Long id , @AuthenticationPrincipal(expression = "username") String email){
 
-        Booking booking = bookingService.accept(id, email);
+        Booking booking = bookingService.manageBooking(id, email, "accept");
 
-        return ResponseEntity.ok(BookingResponse.fromBooking(booking));
+        return ResponseEntity.ok(BookingResponse.fromBooking(booking,email));
+    }
+
+    @PostMapping("/{id}/decline")
+    public ResponseEntity<?> declineBooking(@PathVariable Long id, @AuthenticationPrincipal(expression = "username") String email){
+        Booking booking = bookingService.manageBooking(id,email,"decline");
+        return ResponseEntity.ok(BookingResponse.fromBooking(booking, email));
+    }
+
+    @PostMapping("/{id}/cancel")
+    public ResponseEntity<?> cancelBooking(@PathVariable Long id, @AuthenticationPrincipal(expression = "username")String email){
+        Booking booking = bookingService.manageBooking(id,email,"cancel");
+        return ResponseEntity.ok(BookingResponse.fromBooking(booking,email));
     }
 
 }
