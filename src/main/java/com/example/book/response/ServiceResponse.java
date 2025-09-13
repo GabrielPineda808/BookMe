@@ -18,6 +18,7 @@ public class ServiceResponse {
     private int intervalMinutes;
     private Double averageRating;
     private Integer reviewCount;
+    private String created_At;
 
     public static ServiceResponse fromService(Service service){
         if (service == null) return null;
@@ -41,8 +42,17 @@ public class ServiceResponse {
         dto.setOpen(service.getOpen().toString());
         dto.setReviewCount(service.getReviews().size());
         dto.setAverageRating(avgRating);
+        dto.setCreated_At(service.getCreatedAt().toString());
 
         return dto;
+    }
+
+    public String getCreated_At() {
+        return created_At;
+    }
+
+    public void setCreated_At(String created_At) {
+        this.created_At = created_At;
     }
 
     public Long getId() {

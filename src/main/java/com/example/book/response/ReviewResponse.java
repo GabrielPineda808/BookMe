@@ -4,10 +4,11 @@ public class ReviewResponse {
     private Long id;
     private Long serviceId;
     private Long reviewerId;
-    private String reviewerDisplayName; // or avatar URL if you show it
-    private int rating;                 // 1..5
+    private String reviewerDisplayName;
+    private int rating;
     private String comment;
     private String createdAt;
+    private String updatedAt;
 
     public static ReviewResponse from(com.example.book.model.Review r) {
         if (r == null) return null;
@@ -15,11 +16,20 @@ public class ReviewResponse {
         ReviewResponse dto = new ReviewResponse();
         dto.setId(r.getId());
         dto.setReviewerId(r.getUser() != null ? r.getUser().getId() : null);
+        dto.setReviewerDisplayName(r.getUser().getFirst_name() + " " + r.getUser().getLast_name());
         dto.setServiceId(r.getService() != null ? r.getService().getId() : null);
         dto.setRating(Integer.parseInt(String.valueOf(r.getRating())));
         dto.setComment(r.getComment());
         dto.setCreatedAt(r.getCreatedAt().toString());
         return dto;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public Long getId() {

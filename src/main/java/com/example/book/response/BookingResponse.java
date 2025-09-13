@@ -1,6 +1,8 @@
 package com.example.book.response;
 
 import com.example.book.model.Booking;
+import com.example.book.model.BookingStatus;
+import java.time.LocalDateTime;
 
 public class BookingResponse {
     private Long id;
@@ -11,15 +13,13 @@ public class BookingResponse {
     private String start;         // ISO 8601 e.g. "2025-09-10T10:00:00Z" (or with zone you use)
     private String end;           // ISO 8601
     private String date;
-    // Optional conveniences for the UI:
     private Boolean canAccept;
     private Boolean canDecline;
     private Boolean canCancel;
-    // Audit (optional if you show history):
     private String createdAt;
     private String updatedAt;
 
-    public static BookingResponse fromBooking(Booking booking) {
+    public static BookingResponse fromBooking(Booking booking, String currentUserEmail) {
         BookingResponse resp = new BookingResponse();
         resp.setId(booking.getId());
         resp.setServiceId(booking.getService().getId());
@@ -27,6 +27,21 @@ public class BookingResponse {
         resp.setStart(booking.getStart().toString());
         resp.setEnd(booking.getEnd().toString());
         resp.setDate(booking.getDate().toString());
+        resp.setCreatedAt(booking.getCreatedAt().toString());
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime start = LocalDateTime.of(booking.getDate(), booking.getStart());
+
+        boolean isOwner   = booking.getService().getUser().getEmail().equals(currentUserEmail);
+        boolean isBooker  = booking.getUser().getEmail().equals(currentUserEmail);
+        boolean pending   = booking.getStatus() == BookingStatus.PENDING;
+        boolean future    = now.isBefore(start);
+
+        // rules
+        resp.setCanAccept(isOwner && pending && now.isBefore(start.minusHours(1)));
+        resp.setCanDecline(isOwner && pending);
+        resp.setCanCancel(isBooker && (pending || booking.getStatus() == BookingStatus.CONFIRMED) && future);
+
         return resp;
     }
 
