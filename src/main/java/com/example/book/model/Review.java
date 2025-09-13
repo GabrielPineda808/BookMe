@@ -1,17 +1,18 @@
 package com.example.book.model;
 
+import com.example.book.audit.AuditableBase;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.time.LocalDateTime;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @Setter
-public class Review {
+@EntityListeners(AuditingEntityListener.class)
+public class Review extends AuditableBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +32,6 @@ public class Review {
 
     private String comment;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
 
     public Review() {
     }
@@ -41,14 +41,6 @@ public class Review {
         this.service = service;
         this.rating = rating;
         this.comment = comment;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     public Booking getBooking() {
@@ -62,7 +54,6 @@ public class Review {
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
