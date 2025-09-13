@@ -1,21 +1,30 @@
 package com.example.book.model;
 
+import com.example.book.audit.AuditableBase;
 import com.example.book.dto.LocationDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.Auditable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAccessor;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
 @Setter
 @Table(name="service")
-public class Service {
+@EntityListeners(AuditingEntityListener.class)
+public class Service extends AuditableBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -67,6 +76,10 @@ public class Service {
         this.location = location;
         this.reviews = reviews;
         this.bookings = bookings;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getDesc() {

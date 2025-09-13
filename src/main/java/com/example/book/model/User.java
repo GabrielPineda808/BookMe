@@ -1,20 +1,26 @@
 package com.example.book.model;
 
+import com.example.book.audit.AuditableBase;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.Auditable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.temporal.TemporalAccessor;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
 @Setter
 @Table(name="users")
-public class User implements UserDetails {
+@EntityListeners(AuditingEntityListener.class)
+public class User extends AuditableBase implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,9 +42,6 @@ public class User implements UserDetails {
     private String last_name;
 
     private String phone;
-
-    @Column(nullable = false)
-    private String created_at;
 
     @Column(nullable = false)
     private boolean enabled;
@@ -71,22 +74,6 @@ public class User implements UserDetails {
         this.email = email;
         this.first_name = first_name;
         this.last_name = last_name;
-    }
-
-    public User(String email, String password, Role role, String first_name, String last_name, String phone, String created_at, boolean enabled, String verification_code, LocalDateTime verification_expiration, List<Booking> bookings, Location location, List<Review> reviews) {
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.phone = phone;
-        this.created_at = created_at;
-        this.enabled = enabled;
-        this.verification_code = verification_code;
-        this.verification_expiration = verification_expiration;
-        this.bookings = bookings;
-        this.location = location;
-        this.reviews = reviews;
     }
 
     public Long getId() {
@@ -139,14 +126,6 @@ public class User implements UserDetails {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(String created_at) {
-        this.created_at = created_at;
     }
 
     public void setEnabled(boolean enabled) {
