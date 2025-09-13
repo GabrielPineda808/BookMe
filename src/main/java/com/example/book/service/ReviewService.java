@@ -30,16 +30,11 @@ public class ReviewService {
     }
 
     public Review createReview(ReviewDto input, String email){
-
-        System.out.println("service");
         User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
-        System.out.println("user");
 
         Booking booking = bookingRepository.findById(input.getBookingId()).orElseThrow(()-> new RuntimeException("Booking Not Found"));
-        System.out.println("booking");
 
         com.example.book.model.Service service = serviceRepository.findById(booking.getService().getId()).orElseThrow(()-> new RuntimeException("Service Not Found"));
-        System.out.println("service model");
 
         boolean reviewExists = repository.findByUserBooking(booking.getId(),owner.getId());
 
@@ -65,4 +60,35 @@ public class ReviewService {
         System.out.println("saved");
         return review;
     }
+
+    public Review updateReview(Long id, ReviewDto input, String email){
+        Review review = repository.findById(id).orElseThrow(()-> new RuntimeException("Review Not Found"));
+        if(review.getUpdatedAt() != null){
+            throw new RuntimeException("Only One Update Per Review");
+        }
+        User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        Booking booking = bookingRepository.findById(input.getBookingId()).orElseThrow(()-> new RuntimeException("Booking Not Found"));
+        com.example.book.model.Service service = serviceRepository.findById(booking.getService().getId()).orElseThrow(()-> new RuntimeException("Service Not Found"));
+
+        review.setBooking(booking);
+        review.setService(service);
+        review.setUser(owner);
+        review.setRating(input.getRating());
+        review.setComment(input.getComment());
+        repository.save(review);
+        return review;
+
+    }
+
+    public ResponseEntity<?> deleteReview(Long id, String email){
+        Review review = repository.findById(id).orElseThrow(()-> new RuntimeException("Review Not Found"));
+        User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        if(!review.getUser().equals(owner)){
+            throw new IllegalArgumentException("Only Reviewer Can Delete Review");
+        }
+
+        repository.delete(review);
+        return ResponseEntity.ok("Review Deleted");
+    }
+
 }
