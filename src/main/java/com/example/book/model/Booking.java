@@ -1,17 +1,26 @@
 package com.example.book.model;
 
+import com.example.book.audit.AuditableBase;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.Auditable;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.TemporalAccessor;
+import java.util.Optional;
 
 @Entity
 @Getter
 @Setter
 @Table(name="booking")
-public class Booking {
+@EntityListeners(AuditingEntityListener.class)
+public class Booking extends AuditableBase {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
