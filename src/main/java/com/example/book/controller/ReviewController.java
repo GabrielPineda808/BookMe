@@ -25,4 +25,15 @@ public class ReviewController {
         Review review = reviewService.createReview(input, email);
         return ResponseEntity.ok(ReviewResponse.from(review));
     }
+
+    @PostMapping("/{id}/update")
+    public ResponseEntity<?> updateReview(@PathVariable Long id, @RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){
+        Review review = reviewService.updateReview(id, input, email);
+        return ResponseEntity.ok(ReviewResponse.from(review));
+    }
+
+    @PostMapping("/{id}/delete")
+    public ResponseEntity<?> deleteReview(@PathVariable Long id, @AuthenticationPrincipal(expression = "username") String email){
+        return reviewService.deleteReview(id, email);
+    }
 }
