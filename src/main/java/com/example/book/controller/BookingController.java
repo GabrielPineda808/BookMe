@@ -7,6 +7,7 @@ import com.example.book.model.BookingStatus;
 import com.example.book.model.Service;
 import com.example.book.response.BookingResponse;
 import com.example.book.service.BookingService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +26,7 @@ public class BookingController {
     }
 
     @PostMapping("/book")
-    public ResponseEntity<?> bookService(@RequestBody BookingDto input, @AuthenticationPrincipal(expression = "username") String email){
+    public ResponseEntity<?> bookService(@Valid @RequestBody BookingDto input, @AuthenticationPrincipal(expression = "username") String email){
         Booking booking = bookingService.createBooking(input, email);
         return ResponseEntity.ok(BookingResponse.fromBooking(booking, email));
     }

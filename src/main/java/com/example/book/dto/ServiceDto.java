@@ -2,27 +2,35 @@ package com.example.book.dto;
 
 import com.example.book.model.Booking;
 import com.example.book.model.Location;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 
 import java.time.LocalTime;
 
 public class ServiceDto {
 
+    @NotBlank(message = "Service handle is required")
+    @Size(min = 3, max = 50, message = "Handle must be between 3 and 50 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Handle can only contain letters, numbers, hyphens, and underscores")
     private String handle;
 
+    @NotBlank(message = "Service name is required")
+    @Size(min = 2, max = 100, message = "Service name must be between 2 and 100 characters")
     private String service_name;
 
     private LocationDto location;
 
+    @Size(max = 500, message = "Description cannot exceed 500 characters")
     private String desc;
 
+    @NotNull(message = "Opening time is required")
     private LocalTime open;
 
+    @NotNull(message = "Closing time is required")
     private LocalTime close;
 
-    @Min(5) @Max(240) private int interval;
+    @Min(value = 5, message = "Interval must be at least 5 minutes")
+    @Max(value = 240, message = "Interval cannot exceed 240 minutes")
+    private int interval;
 
     public int getInterval() {
         return interval;

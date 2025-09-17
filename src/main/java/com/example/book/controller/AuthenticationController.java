@@ -7,6 +7,7 @@ import com.example.book.model.User;
 import com.example.book.response.LoginResponse;
 import com.example.book.service.AuthenticationService;
 import com.example.book.service.JwtService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginUserDto loginUserDto){
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginUserDto loginUserDto){
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
         LoginResponse loginResponse = new LoginResponse(jwtToken, jwtService.getExpirationTime());
@@ -31,13 +32,13 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto){
+    public ResponseEntity<User> register(@Valid @RequestBody RegisterUserDto registerUserDto){
         User registeredUser = authenticationService.signup(registerUserDto);
         return ResponseEntity.ok(registeredUser);
     }
 
     @PostMapping("/verify")
-    public ResponseEntity<?> verifyUser(@RequestBody VerifyUserDto verifyUserDto){
+    public ResponseEntity<?> verifyUser(@Valid @RequestBody VerifyUserDto verifyUserDto){
         try {
             authenticationService.verifyUser(verifyUserDto);
             return ResponseEntity.ok("Account Verified Successfully");

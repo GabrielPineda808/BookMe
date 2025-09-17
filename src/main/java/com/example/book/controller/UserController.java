@@ -5,6 +5,7 @@ import com.example.book.dto.UserDto;
 import com.example.book.model.Booking;
 import com.example.book.model.User;
 import com.example.book.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,7 +36,7 @@ public class UserController {
 
     //see if this affects bookings
     @PostMapping("/update")
-    public ResponseEntity<?> updateUser(@RequestBody UserDto input, @AuthenticationPrincipal(expression = "username") String email){
+    public ResponseEntity<?> updateUser(@Valid @RequestBody UserDto input, @AuthenticationPrincipal(expression = "username") String email){
         User user = userService.updateUser(input, email);
         return ResponseEntity.ok(UserDto.from(user));
     }

@@ -6,6 +6,7 @@ import com.example.book.model.Booking;
 import com.example.book.model.BookingChangeRequest;
 import com.example.book.response.BookingResponse;
 import com.example.book.service.BookingChangeRequestService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -30,7 +31,7 @@ public class BookingChangeRequestController {
     //as then cancleling within the hour may be a fine but thets not where we are right now. so for now only the service
     //can ask the user if they can book to a new time if they do not wANT  to str8 cancel on them as bad servie yk
     @PostMapping("/{id}/service-propose")
-    public ResponseEntity<?> proposeChange(@PathVariable Long id, @RequestBody BookingChangeRequestDto input, @AuthenticationPrincipal(expression = "username") String email){
+    public ResponseEntity<?> proposeChange(@PathVariable Long id, @Valid @RequestBody BookingChangeRequestDto input, @AuthenticationPrincipal(expression = "username") String email){
         BookingChangeRequest bookingChangeRequest = bcrs.proposeChangeAsService(id,input,email);
         return ResponseEntity.ok(BookingChangeRequestDto.from(bookingChangeRequest));
     }

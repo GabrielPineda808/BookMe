@@ -4,6 +4,7 @@ import com.example.book.dto.ReviewDto;
 import com.example.book.model.Review;
 import com.example.book.response.ReviewResponse;
 import com.example.book.service.ReviewService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,13 +22,13 @@ public class ReviewController {
     }
 
     @PostMapping("/review")
-    public ResponseEntity<?> createReview(@RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){
+    public ResponseEntity<?> createReview(@Valid @RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){
         Review review = reviewService.createReview(input, email);
         return ResponseEntity.ok(ReviewResponse.from(review));
     }
 
     @PostMapping("/{id}/update")
-    public ResponseEntity<?> updateReview(@PathVariable Long id, @RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){
+    public ResponseEntity<?> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){
         Review review = reviewService.updateReview(id, input, email);
         return ResponseEntity.ok(ReviewResponse.from(review));
     }
