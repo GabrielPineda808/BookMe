@@ -18,12 +18,12 @@ public interface BookingChangeRequestRepository extends JpaRepository<BookingCha
     
     List<BookingChangeRequest> findByUserIdAndStatus(Long userId, BookingStatus status);
     
-    @Query("SELECT bcr FROM BookingChangeRequest bcr WHERE bcr.booking.id = :bookingId AND bcr.status = :status AND bcr.expiresAt > :now")
+    @Query("SELECT bcr FROM BookingChangeRequest bcr WHERE bcr.booking.id = :bookingId AND bcr.status = :status AND bcr.expires_at > :now")
     Optional<BookingChangeRequest> findActiveChangeRequest(@Param("bookingId") Long bookingId, 
                                                           @Param("status") BookingStatus status, 
                                                           @Param("now") LocalDateTime now);
     
-    @Query("SELECT bcr FROM BookingChangeRequest bcr WHERE bcr.user.id = :userId AND bcr.status = :status AND bcr.expiresAt > :now")
+    @Query("SELECT bcr FROM BookingChangeRequest bcr WHERE bcr.user.id = :userId AND bcr.status = :status AND bcr.expires_at > :now")
     List<BookingChangeRequest> findActiveChangeRequestsForUser(@Param("userId") Long userId, 
                                                               @Param("status") BookingStatus status, 
                                                               @Param("now") LocalDateTime now);
