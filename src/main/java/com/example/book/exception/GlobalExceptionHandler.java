@@ -355,5 +355,206 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
+
+    // Booking Time Validation Exceptions
+    @ExceptionHandler(BookingTimeValidationException.class)
+    public ResponseEntity<ErrorResponse> handleBookingTimeValidationException(
+            BookingTimeValidationException ex, HttpServletRequest request) {
+        logger.warn("Booking time validation failed: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_TIME_VALIDATION_ERROR",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(BookingStatusException.class)
+    public ResponseEntity<ErrorResponse> handleBookingStatusException(
+            BookingStatusException ex, HttpServletRequest request) {
+        logger.warn("Booking status error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_STATUS_ERROR",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(BookingOwnershipException.class)
+    public ResponseEntity<ErrorResponse> handleBookingOwnershipException(
+            BookingOwnershipException ex, HttpServletRequest request) {
+        logger.warn("Booking ownership error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_OWNERSHIP_ERROR",
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    @ExceptionHandler(BookingExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleBookingExpiredException(
+            BookingExpiredException ex, HttpServletRequest request) {
+        logger.warn("Booking expired: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_EXPIRED",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(BookingDurationException.class)
+    public ResponseEntity<ErrorResponse> handleBookingDurationException(
+            BookingDurationException ex, HttpServletRequest request) {
+        logger.warn("Booking duration error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_DURATION_ERROR",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    // Review Exceptions
+    @ExceptionHandler(ReviewTimingException.class)
+    public ResponseEntity<ErrorResponse> handleReviewTimingException(
+            ReviewTimingException ex, HttpServletRequest request) {
+        logger.warn("Review timing error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "REVIEW_TIMING_ERROR",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(ReviewOwnershipException.class)
+    public ResponseEntity<ErrorResponse> handleReviewOwnershipException(
+            ReviewOwnershipException ex, HttpServletRequest request) {
+        logger.warn("Review ownership error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "REVIEW_OWNERSHIP_ERROR",
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    @ExceptionHandler(ReviewUpdateException.class)
+    public ResponseEntity<ErrorResponse> handleReviewUpdateException(
+            ReviewUpdateException ex, HttpServletRequest request) {
+        logger.warn("Review update error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "REVIEW_UPDATE_ERROR",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    // Booking Change Request Exceptions
+    @ExceptionHandler(BookingChangeRequestNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleBookingChangeRequestNotFoundException(
+            BookingChangeRequestNotFoundException ex, HttpServletRequest request) {
+        logger.warn("Booking change request not found: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_CHANGE_REQUEST_NOT_FOUND",
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
+    }
+
+    @ExceptionHandler(BookingChangeRequestExpiredException.class)
+    public ResponseEntity<ErrorResponse> handleBookingChangeRequestExpiredException(
+            BookingChangeRequestExpiredException ex, HttpServletRequest request) {
+        logger.warn("Booking change request expired: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_CHANGE_REQUEST_EXPIRED",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(BookingChangeRequestStatusException.class)
+    public ResponseEntity<ErrorResponse> handleBookingChangeRequestStatusException(
+            BookingChangeRequestStatusException ex, HttpServletRequest request) {
+        logger.warn("Booking change request status error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_CHANGE_REQUEST_STATUS_ERROR",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(BookingChangeRequestOwnershipException.class)
+    public ResponseEntity<ErrorResponse> handleBookingChangeRequestOwnershipException(
+            BookingChangeRequestOwnershipException ex, HttpServletRequest request) {
+        logger.warn("Booking change request ownership error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "BOOKING_CHANGE_REQUEST_OWNERSHIP_ERROR",
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
+
+    // Service Exceptions
+    @ExceptionHandler(ServiceIntervalException.class)
+    public ResponseEntity<ErrorResponse> handleServiceIntervalException(
+            ServiceIntervalException ex, HttpServletRequest request) {
+        logger.warn("Service interval error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "SERVICE_INTERVAL_ERROR",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    @ExceptionHandler(ServiceHoursException.class)
+    public ResponseEntity<ErrorResponse> handleServiceHoursException(
+            ServiceHoursException ex, HttpServletRequest request) {
+        logger.warn("Service hours error: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "SERVICE_HOURS_ERROR",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    // User Exceptions
+    @ExceptionHandler(UserNotActiveException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotActiveException(
+            UserNotActiveException ex, HttpServletRequest request) {
+        logger.warn("User not active: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "USER_NOT_ACTIVE",
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
+    }
 }
+
 

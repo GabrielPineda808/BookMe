@@ -1,6 +1,7 @@
 package com.example.book.service;
 
 import com.example.book.dto.BookingChangeRequestDto;
+import com.example.book.exception.*;
 import com.example.book.model.Booking;
 import com.example.book.model.BookingChangeRequest;
 import com.example.book.model.BookingStatus;
@@ -36,17 +37,17 @@ public class BookingChangeRequestService {
 
     @Transactional
     public BookingChangeRequest proposeChangeAsService(Long id, BookingChangeRequestDto input, String email){
-        User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
-        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new RuntimeException("Booking Not Found"));
-        com.example.book.model.Service service = serviceRepository.findById(booking.getService().getId()).orElseThrow(()-> new RuntimeException("Service Not Found"));
+        User owner = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User Not Found"));
+        Booking booking = bookingRepository.findById(id).orElseThrow(()-> new BookingNotFoundException("Booking Not Found"));
+        com.example.book.model.Service service = serviceRepository.findById(booking.getService().getId()).orElseThrow(()-> new ServiceNotFoundException("Service Not Found"));
 
         if(!Objects.equals(owner.getId(), service.getUser().getId())){
-            throw new RuntimeException("Service Owner By User");
+            throw new ServiceNotOwnedByUserException("Service not owned by user");
         }
         try {
             bookingService.bookingChecks(booking, owner, service);
         }catch (Exception e){
-            throw new RuntimeException("Error With Booking");
+            throw new BookingManagementException("Error With Booking: " + e.getMessage());
         }
 
         BookingChangeRequest bcr = new BookingChangeRequest();
@@ -69,24 +70,24 @@ public class BookingChangeRequestService {
 
     @Transactional
     public Booking acceptProposal(Long id, String email){
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
-        BookingChangeRequest changeRequest = bcrr.findById(id).orElseThrow(()-> new RuntimeException("Change Request Not Found"));
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User Not Found"));
+        BookingChangeRequest changeRequest = bcrr.findById(id).orElseThrow(()-> new BookingChangeRequestNotFoundException("Change Request Not Found"));
         Booking booking = changeRequest.getBooking();
 
         // Verify the user is the booking owner (customer)
         if(!Objects.equals(user.getId(), booking.getUser().getId())){
-            throw new RuntimeException("Only the booking owner can accept change proposals");
+            throw new BookingChangeRequestOwnershipException("Only the booking owner can accept change proposals");
         }
 
         // Verify the change request is still pending and not expired
         if(changeRequest.getStatus() != BookingStatus.PENDING){
-            throw new RuntimeException("Change request is no longer pending");
+            throw new BookingChangeRequestStatusException("Change request is no longer pending");
         }
 
         if(changeRequest.getExpires_at() != null && changeRequest.getExpires_at().isBefore(LocalDateTime.now())){
             changeRequest.setStatus(BookingStatus.EXPIRED);
             bcrr.save(changeRequest);
-            throw new RuntimeException("Change request has expired");
+            throw new BookingChangeRequestExpiredException("Change request has expired");
         }
 
         // Update the booking with the proposed times
@@ -108,18 +109,18 @@ public class BookingChangeRequestService {
 
     @Transactional
     public Booking declineProposal(Long id, String email, String reason){
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
-        BookingChangeRequest changeRequest = bcrr.findById(id).orElseThrow(()-> new RuntimeException("Change Request Not Found"));
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User Not Found"));
+        BookingChangeRequest changeRequest = bcrr.findById(id).orElseThrow(()-> new BookingChangeRequestNotFoundException("Change Request Not Found"));
         Booking booking = changeRequest.getBooking();
 
         // Verify the user is the booking owner (customer)
         if(!Objects.equals(user.getId(), booking.getUser().getId())){
-            throw new RuntimeException("Only the booking owner can decline change proposals");
+            throw new BookingChangeRequestOwnershipException("Only the booking owner can decline change proposals");
         }
 
         // Verify the change request is still pending
         if(changeRequest.getStatus() != BookingStatus.PENDING){
-            throw new RuntimeException("Change request is no longer pending");
+            throw new BookingChangeRequestStatusException("Change request is no longer pending");
         }
 
         // Update the change request status
@@ -132,7 +133,7 @@ public class BookingChangeRequestService {
     }
 
     public List<BookingChangeRequest> getPendingChangeRequestsForUser(String email){
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User Not Found"));
         return bcrr.findActiveChangeRequestsForUser(user.getId(), BookingStatus.PENDING, LocalDateTime.now());
     }
 
@@ -158,7 +159,7 @@ public class BookingChangeRequestService {
     }
 
     public BookingChangeRequest getChangeRequestById(Long id){
-        return bcrr.findById(id).orElseThrow(()-> new RuntimeException("Change Request Not Found"));
+        return bcrr.findById(id).orElseThrow(()-> new BookingChangeRequestNotFoundException("Change Request Not Found"));
     }
 
 

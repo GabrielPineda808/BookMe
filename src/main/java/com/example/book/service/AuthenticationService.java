@@ -3,6 +3,7 @@ package com.example.book.service;
 import com.example.book.dto.LoginUserDto;
 import com.example.book.dto.RegisterUserDto;
 import com.example.book.dto.VerifyUserDto;
+import com.example.book.exception.*;
 import com.example.book.model.Role;
 import com.example.book.model.User;
 import com.example.book.repository.UserRepository;
@@ -48,7 +49,7 @@ public class AuthenticationService {
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             if(user.getVerification_expiration().isBefore(LocalDateTime.now())){
-                throw new RuntimeException("Verification Code Expired");
+                throw new VerificationCodeExpiredException("Verification Code Expired");
             }
             if(user.getVerification_code().equals(input.getVerification_code())){
                 user.setEnabled(true);
@@ -56,10 +57,10 @@ public class AuthenticationService {
                 user.setVerification_expiration(null);
                 userRepository.save(user);
             }else{
-                throw new RuntimeException("Invalid Verification Code");
+                throw new InvalidVerificationCodeException("Invalid Verification Code");
             }
         }else{
-            throw new RuntimeException("User Not Found");
+            throw new UserNotFoundException("User Not Found");
         }
     }
 
@@ -96,21 +97,21 @@ public class AuthenticationService {
         if(optionalUser.isPresent()){
             User user = optionalUser.get();
             if(user.isEnabled()){
-                throw new RuntimeException("Account Already Verified");
+                throw new AccountAlreadyVerifiedException("Account Already Verified");
             }
             user.setVerification_code(generateVerificationCode());
             user.setVerification_expiration(LocalDateTime.now().plusMinutes(5));
             sendVerificationEmail(user);
             userRepository.save(user);
         }else{
-            throw new RuntimeException("User Not Found");
+            throw new UserNotFoundException("User Not Found");
         }
     }
 
     public User authenticate(LoginUserDto input){
-        User user = userRepository.findByEmail(input.getEmail()).orElseThrow(()-> new RuntimeException("User Not Found"));//finding user via email method
+        User user = userRepository.findByEmail(input.getEmail()).orElseThrow(()-> new UserNotFoundException("User Not Found"));//finding user via email method
         if(!user.isEnabled()){
-            throw new RuntimeException("Account Not Verified");
+            throw new AccountNotVerifiedException("Account Not Verified");
         }
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(input.getEmail(),input.getPassword()));
         return user;

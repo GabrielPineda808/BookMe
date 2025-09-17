@@ -1,6 +1,7 @@
 package com.example.book.service;
 
 import com.example.book.dto.ReviewDto;
+import com.example.book.exception.*;
 import com.example.book.model.Booking;
 import com.example.book.model.BookingStatus;
 import com.example.book.model.Review;
@@ -30,23 +31,23 @@ public class ReviewService {
     }
 
     public Review createReview(ReviewDto input, String email){
-        User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        User owner = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User Not Found"));
 
-        Booking booking = bookingRepository.findById(input.getBookingId()).orElseThrow(()-> new RuntimeException("Booking Not Found"));
+        Booking booking = bookingRepository.findById(input.getBookingId()).orElseThrow(()-> new BookingNotFoundException("Booking Not Found"));
 
-        com.example.book.model.Service service = serviceRepository.findById(booking.getService().getId()).orElseThrow(()-> new RuntimeException("Service Not Found"));
+        com.example.book.model.Service service = serviceRepository.findById(booking.getService().getId()).orElseThrow(()-> new ServiceNotFoundException("Service Not Found"));
 
         boolean reviewExists = repository.findByUserBooking(booking.getId(),owner.getId());
 
         if( LocalDate.now().isBefore(booking.getDate()) || LocalTime.now().isBefore(booking.getEnd())){
             System.out.println("Cannot Review Before Booking Date OR Time");
-            throw new IllegalStateException("Only One Review Per User Per Booking");
+            throw new ReviewTimingException("Cannot review before booking date or time");
         }
 
 
         if(reviewExists){
             System.out.println("review exists for booking and user");
-            throw new IllegalStateException("Only One Review Per User Per Booking");
+            throw new ReviewValidationException("Only One Review Per User Per Booking");
         }
 
         Review review = new Review();
@@ -62,13 +63,13 @@ public class ReviewService {
     }
 
     public Review updateReview(Long id, ReviewDto input, String email){
-        Review review = repository.findById(id).orElseThrow(()-> new RuntimeException("Review Not Found"));
+        Review review = repository.findById(id).orElseThrow(()-> new ReviewNotFoundException("Review Not Found"));
         if(review.getUpdatedAt() != null){
-            throw new RuntimeException("Only One Update Per Review");
+            throw new ReviewUpdateException("Only One Update Per Review");
         }
-        User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
-        Booking booking = bookingRepository.findById(input.getBookingId()).orElseThrow(()-> new RuntimeException("Booking Not Found"));
-        com.example.book.model.Service service = serviceRepository.findById(booking.getService().getId()).orElseThrow(()-> new RuntimeException("Service Not Found"));
+        User owner = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User Not Found"));
+        Booking booking = bookingRepository.findById(input.getBookingId()).orElseThrow(()-> new BookingNotFoundException("Booking Not Found"));
+        com.example.book.model.Service service = serviceRepository.findById(booking.getService().getId()).orElseThrow(()-> new ServiceNotFoundException("Service Not Found"));
 
         review.setBooking(booking);
         review.setService(service);
@@ -81,10 +82,10 @@ public class ReviewService {
     }
 
     public ResponseEntity<?> deleteReview(Long id, String email){
-        Review review = repository.findById(id).orElseThrow(()-> new RuntimeException("Review Not Found"));
-        User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        Review review = repository.findById(id).orElseThrow(()-> new ReviewNotFoundException("Review Not Found"));
+        User owner = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User Not Found"));
         if(!review.getUser().equals(owner)){
-            throw new IllegalArgumentException("Only Reviewer Can Delete Review");
+            throw new ReviewOwnershipException("Only Reviewer Can Delete Review");
         }
 
         repository.delete(review);

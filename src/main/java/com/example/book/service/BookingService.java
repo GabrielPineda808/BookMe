@@ -1,6 +1,7 @@
 package com.example.book.service;
 
 import com.example.book.dto.BookingDto;
+import com.example.book.exception.*;
 import com.example.book.model.Booking;
 import com.example.book.model.BookingStatus;
 import com.example.book.model.User;
@@ -30,18 +31,18 @@ public class BookingService {
     public Booking createBooking(BookingDto input, String email){
         System.out.println("booking service");
         if (!input.getEnd().isAfter(input.getStart())) {
-            throw new IllegalArgumentException("End time must be after start time.");
+            throw new BookingTimeValidationException("End time must be after start time.");
         }
 
         //Booking is within service hours
 
         User owner = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         System.out.println("User found");
 
         com.example.book.model.Service service = serviceRepository.findById(input.getServiceId())
-                .orElseThrow(()-> new RuntimeException("Service Not Found"));
+                .orElseThrow(()-> new ServiceNotFoundException("Service Not Found"));
 
 
 
@@ -49,7 +50,7 @@ public class BookingService {
                 service.getId(),input.getDate(), input.getStart(), input.getEnd());
 
         if (overlaps) {
-            throw new IllegalStateException("Time slot overlaps an existing booking.");
+            throw new BookingOverlapException("Time slot overlaps an existing booking.");
         }
 
         Booking booking = new Booking();
@@ -68,8 +69,8 @@ public class BookingService {
 
     @Transactional
     public Booking manageBooking(Long id, String email, String action){
-        Booking booking = bookingRepository.findById(id).orElseThrow(()->new RuntimeException("Booking Not Found"));
-        User owner = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        Booking booking = bookingRepository.findById(id).orElseThrow(()->new BookingNotFoundException("Booking Not Found"));
+        User owner = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("User Not Found"));
         com.example.book.model.Service service = booking.getService();
 
         if(bookingChecks(booking,owner,service)) {
@@ -80,7 +81,7 @@ public class BookingService {
                     booking.setStatus(BookingStatus.CANCELLED);
                     return bookingRepository.save(booking);
                 }
-                throw new IllegalArgumentException("Booking does not belong to service owner.");
+                throw new BookingOwnershipException("Booking does not belong to service owner.");
             }else {
                 if (action.equals("accept")) {
                     booking.setStatus(BookingStatus.CONFIRMED);
@@ -92,14 +93,14 @@ public class BookingService {
                 return bookingRepository.save(booking);
             }
         }else {
-            throw new RuntimeException("Booking Management Not Available");
+            throw new BookingManagementException("Booking Management Not Available");
         }
     }
 
     public Boolean bookingChecks(Booking booking, User owner, com.example.book.model.Service service){
         //Booking still pending check
-        if(!booking.getStatus().equals(BookingStatus.PENDING) || !booking.getStatus().equals(BookingStatus.CONFIRMED)){
-            throw new IllegalArgumentException("Booking has either been CONFIRMED, DECLINE or CANCELLED");
+        if(!booking.getStatus().equals(BookingStatus.PENDING) && !booking.getStatus().equals(BookingStatus.CONFIRMED)){
+            throw new BookingStatusException("Booking has either been DECLINED or CANCELLED");
         }
 
         // checking that booking has not passed booking date requested & the time is an hour befoer booking minimum
@@ -118,6 +119,7 @@ public class BookingService {
         if (now.isAfter(end) || !now.isBefore(start.minusHours(1))) {
             booking.setStatus(BookingStatus.EXPIRED);
             bookingRepository.save(booking);
+            throw new BookingExpiredException("Booking has expired or is too close to start time");
         }
 
         // Service constraints
@@ -125,31 +127,31 @@ public class BookingService {
         LocalTime close = service.getClose();
         int intervalMin = service.getInterval();
         if (intervalMin <= 0) {
-            throw new IllegalStateException("Service interval must be > 0");
+            throw new ServiceIntervalException("Service interval must be > 0");
         }
 
         // Within hours (inclusive)
         LocalTime bStart = booking.getStart();
         LocalTime bEnd   = booking.getEnd();
         if (bStart.isBefore(open) || bEnd.isAfter(close)) {
-            throw new IllegalArgumentException("Booking time is outside service hours");
+            throw new ServiceHoursException("Booking time is outside service hours");
         }
 
         // Duration must be positive
         long durationMin = Duration.between(bStart, bEnd).toMinutes();
         if (durationMin <= 0) {
-            throw new IllegalArgumentException("End must be after start");
+            throw new BookingDurationException("End must be after start");
         }
 
         // Start must align to interval grid from 'open'
         long minutesFromOpen = Duration.between(open, bStart).toMinutes();
         if (Math.floorMod(minutesFromOpen, intervalMin) != 0) {
-            throw new IllegalArgumentException("Start time not aligned to interval");
+            throw new BookingTimeValidationException("Start time not aligned to interval");
         }
 
         // Duration must align to interval (allow multi-slot)
         if (durationMin % intervalMin != 0) {
-            throw new IllegalArgumentException("Duration must be a multiple of the interval");
+            throw new BookingTimeValidationException("Duration must be a multiple of the interval");
         }
 
         //No overlapping accepted booking for the same service
@@ -158,12 +160,12 @@ public class BookingService {
 
         //checking if bookings overlap
         if (overlaps) {
-            throw new IllegalStateException("Time slot overlaps an existing booking.");
+            throw new BookingOverlapException("Time slot overlaps an existing booking.");
         }
 
         //User account is active
         if(!owner.isEnabled()){
-            throw new RuntimeException("User Not Active");
+            throw new UserNotActiveException("User Not Active");
         }
 
         // Capacity / Resource Validation
