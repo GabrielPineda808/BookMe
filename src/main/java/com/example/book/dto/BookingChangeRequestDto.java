@@ -26,20 +26,25 @@ public class BookingChangeRequestDto {
     private String expires_at;
 
     public static BookingChangeRequestDto from(BookingChangeRequest input){
+
+        // need to check if validation input is better like @NotNull or @NotEmpty
         BookingChangeRequestDto bcr = new BookingChangeRequestDto();
-        bcr.setId(input.getId());
-        bcr.setBooking_id(input.getBooking().getId());
-        bcr.setUser_id(input.getUser().getId());
-        bcr.setCurrent_date(input.getCurrent_date().toString());
-        bcr.setCurrent_start(input.getCurrent_start().toString());
-        bcr.setCurrent_end(input.getCurrent_end().toString());
-        bcr.setProposed_date(input.getProposed_date().toString());
-        bcr.setProposed_start(input.getProposed_start().toString());
-        bcr.setProposed_end(input.getProposed_end().toString());
-        bcr.setStatus(input.getStatus().toString());
-        bcr.setReason(input.getReason());
-        bcr.setResponse_reason(input.getResponse_reason());
-        bcr.setExpires_at(LocalDateTime.now().plusDays(1).toString());
+        if(input == null){
+            return bcr;
+        }
+        bcr.setId(input.getId() == null ? null : input.getId());
+        bcr.setBooking_id(input.getBooking().getId() == null ? null : input.getBooking().getId());
+        bcr.setUser_id(input.getUser().getId() == null ? null : input.getUser().getId());
+        bcr.setCurrent_date(input.getCurrent_date().toString() == null ? null : input.getCurrent_date().toString());
+        bcr.setCurrent_start(input.getCurrent_start().toString() == null ? null : input.getCurrent_start().toString());
+        bcr.setCurrent_end(input.getCurrent_end().toString() == null ? null : input.getCurrent_end().toString());
+        bcr.setProposed_date(input.getProposed_date().toString() == null ? null : input.getProposed_date().toString());
+        bcr.setProposed_start(input.getProposed_start().toString() == null ? null : input.getProposed_start().toString());
+        bcr.setProposed_end(input.getProposed_end().toString() == null ? null : input.getProposed_end().toString());
+        bcr.setStatus(input.getStatus().toString() == null ? null : input.getStatus().toString());
+        bcr.setReason(input.getReason() == null ? null : input.getReason());
+        bcr.setResponse_reason(input.getResponse_reason() == null ? null : input.getResponse_reason());
+        bcr.setExpires_at(input.getExpires_at() != null ? input.getExpires_at().toString() : null);
 
         return bcr;
 
