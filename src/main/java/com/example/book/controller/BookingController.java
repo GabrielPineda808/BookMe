@@ -30,7 +30,7 @@ public class BookingController {
         return ResponseEntity.ok(BookingResponse.fromBooking(booking, email));
     }
 
-    @PostMapping("/{id}/accept")
+    @PutMapping("/{id}/accept")
     public ResponseEntity<?> acceptBooking(@PathVariable Long id , @AuthenticationPrincipal(expression = "username") String email){
 
         Booking booking = bookingService.manageBooking(id, email, "accept");
@@ -38,18 +38,16 @@ public class BookingController {
         return ResponseEntity.ok(BookingResponse.fromBooking(booking,email));
     }
 
-    @PostMapping("/{id}/decline")
+    @PutMapping("/{id}/decline")
     public ResponseEntity<?> declineBooking(@PathVariable Long id, @AuthenticationPrincipal(expression = "username") String email){
         Booking booking = bookingService.manageBooking(id,email,"decline");
         return ResponseEntity.ok(BookingResponse.fromBooking(booking, email));
     }
 
-    @PostMapping("/{id}/cancel")
+    @PutMapping("/{id}/cancel")
     public ResponseEntity<?> cancelBooking(@PathVariable Long id, @AuthenticationPrincipal(expression = "username")String email){
         Booking booking = bookingService.manageBooking(id,email,"cancel");
         return ResponseEntity.ok(BookingResponse.fromBooking(booking,email));
     }
-
-    //update booking from user and from service from proposal but will create BookingChangeController
 
 }
