@@ -75,7 +75,7 @@ public class BookingDto {
     @AssertTrue(message = "End time must be after start time")
     public boolean isValidTimeRange() {
         if (start == null || end == null) {
-            return true; // Let @NotNull handle null validation
+            return true; // @NotNull can handle validation if var is null
         }
         return end.isAfter(start);
     }
