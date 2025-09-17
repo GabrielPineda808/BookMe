@@ -2,10 +2,11 @@ package com.example.book.service;
 
 import com.example.book.dto.LocationDto;
 import com.example.book.dto.ServiceDto;
+import com.example.book.exception.*;
 import com.example.book.model.Booking;
 import com.example.book.model.BookingChangeRequest;
 import com.example.book.model.BookingStatus;
-import com.example.book.model.Service;
+
 import com.example.book.model.User;
 import com.example.book.repository.BookingChangeRequestRepository;
 import com.example.book.repository.BookingRepository;
@@ -35,16 +36,16 @@ public class ServiceService {
     }
 
     @Transactional
-    public Service createService(ServiceDto input, String email){
+    public com.example.book.model.Service createService(ServiceDto input, String email){
         User owner = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         // Validate handle 
         if (serviceRepository.existsByHandle(input.getHandle())) {
-            throw new RuntimeException("Service handle already exists");
+            throw new ServiceHandleExistsException("Service handle already exists");
         }
 
-        Service service = new Service();
+        com.example.book.model.Service service = new com.example.book.model.Service();
         service.setUser(owner);
         service.setService_name(input.getService_name());
         service.setHandle(input.getHandle());
@@ -67,21 +68,21 @@ public class ServiceService {
     }
 
     @Transactional
-    public Service updateService(Long serviceId, ServiceDto input, String email) {
+    public com.example.book.model.Service updateService(Long serviceId, ServiceDto input, String email) {
         User owner = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        Service service = serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new RuntimeException("Service not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        com.example.book.model.Service service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new ServiceNotFoundException("Service not found"));
 
         // Verify ownership
         if (!Objects.equals(service.getUser().getId(), owner.getId())) {
-            throw new RuntimeException("Only the service owner can update the service");
+            throw new ServiceNotOwnedByUserException("Only the service owner can update the service");
         }
 
         // Check if handle is being changed and validate uniqueness
         if (!service.getHandle().equals(input.getHandle()) && serviceRepository.existsByHandle(input.getHandle())) {
-            throw new RuntimeException("Service handle already exists");
+            throw new ServiceHandleExistsException("Service handle already exists");
         }
 
         // Store old values for old booking checks
@@ -121,21 +122,21 @@ public class ServiceService {
     @Transactional
     public void deleteService(Long serviceId, String email, boolean forceDelete) {
         User owner = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        
-        Service service = serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new RuntimeException("Service not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        com.example.book.model.Service service = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new ServiceNotFoundException("Service not found"));
 
         // Verify ownership
         if (!Objects.equals(service.getUser().getId(), owner.getId())) {
-            throw new RuntimeException("Only the service owner can delete the service");
+            throw new ServiceNotOwnedByUserException("Only the service owner can delete the service");
         }
 
         // Check for active bookings
         long activeBookingsCount = serviceRepository.countActiveBookings(serviceId);
         
         if (activeBookingsCount > 0 && !forceDelete) {
-            throw new RuntimeException("Cannot delete service with active bookings. Use force delete to proceed, but this will cancel all bookings.");
+            throw new ActiveBookingsException("Cannot delete service with active bookings. Use force delete to proceed, but this will cancel all bookings.");
         }
 
         if (activeBookingsCount > 0 && forceDelete) {
@@ -164,33 +165,33 @@ public class ServiceService {
         serviceRepository.delete(service);
     }
 
-    public Service getServiceById(Long serviceId) {
+    public com.example.book.model.Service getServiceById(Long serviceId) {
         return serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new RuntimeException("Service not found"));
+                .orElseThrow(() -> new ServiceNotFoundException("Service not found"));
     }
 
-    public List<Service> getServicesByOwner(String email) {
+    public List<com.example.book.model.Service> getServicesByOwner(String email) {
         User owner = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
         return serviceRepository.findByUser(owner);
     }
 
-    public List<Service> getServicesByCity(String city) {
+    public List<com.example.book.model.Service> getServicesByCity(String city) {
         return serviceRepository.findByCity(city);
     }
 
-    public List<Service> getServicesByState(String state) {
+    public List<com.example.book.model.Service> getServicesByState(String state) {
         return serviceRepository.findByState(state);
     }
 
-    public Service getServiceByHandle(String handle) {
+    public com.example.book.model.Service getServiceByHandle(String handle) {
         return serviceRepository.findByHandle(handle)
-                .orElseThrow(() -> new RuntimeException("Service not found"));
+                .orElseThrow(() -> new ServiceNotFoundException("Service not found"));
     }
 
     public ServiceImpactAnalysis analyzeServiceUpdateImpact(Long serviceId, ServiceDto proposedChanges) {
-        Service currentService = serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new RuntimeException("Service not found"));
+        com.example.book.model.Service currentService = serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new ServiceNotFoundException("Service not found"));
 
         List<Booking> affectedBookings = checkBookingImpact(currentService, 
             proposedChanges.getOpen(), proposedChanges.getClose(), proposedChanges.getInterval());
@@ -198,7 +199,7 @@ public class ServiceService {
         return new ServiceImpactAnalysis(affectedBookings.size(), affectedBookings);
     }
 
-    private List<Booking> checkBookingImpact(Service service, LocalTime newOpen, LocalTime newClose, int newInterval) {
+    private List<Booking> checkBookingImpact(com.example.book.model.Service service, LocalTime newOpen, LocalTime newClose, int newInterval) {
         // Get all confirmed and pending bookings for this service
         List<Booking> bookings = bookingRepository.findByServiceIdAndStatusIn(
             service.getId(), List.of(BookingStatus.PENDING, BookingStatus.CONFIRMED));
@@ -222,7 +223,7 @@ public class ServiceService {
         return durationMinutes % interval == 0;
     }
 
-    private void handleAffectedBookings(Service service, List<Booking> affectedBookings) {
+    private void handleAffectedBookings(com.example.book.model.Service service, List<Booking> affectedBookings) {
         // Send notifications to customers
         // Create automatic change requests
         // Log the changes for audit purposes

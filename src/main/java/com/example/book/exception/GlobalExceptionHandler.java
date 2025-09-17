@@ -130,6 +130,48 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
+
+    @ExceptionHandler(ServiceHandleExistsException.class)
+    public ResponseEntity<ErrorResponse> handleServiceHandleExistsException(
+            ServiceHandleExistsException ex, HttpServletRequest request) {
+        logger.warn("Service handle exists: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "SERVICE_HANDLE_EXISTS",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+
+    @ExceptionHandler(ServiceNotOwnedByUserException.class)
+    public ResponseEntity<ErrorResponse> handleServiceNotOwnedByUserException(
+            ServiceNotOwnedByUserException ex, HttpServletRequest request) {
+        logger.warn("Service not owned by user: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "SERVICE_NOT_OWNED_BY_USER",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+
+    @ExceptionHandler(ActiveBookingsException.class)
+    public ResponseEntity<ErrorResponse> handleActiveBookingsException(
+            ActiveBookingsException ex, HttpServletRequest request) {
+        logger.warn("Service has active bookings: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "ACTIVE_BOOKINGS_FOUND",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
     // Authentication/Authorization Exceptions
     @ExceptionHandler(AccountNotVerifiedException.class)
     public ResponseEntity<ErrorResponse> handleAccountNotVerifiedException(
@@ -144,7 +186,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
 
-    @ExceptionHandler(VerificationCodeExpiredException.class)
+    @ExceptionHandler(VerificationCodeExpiredException.class) //responsible for all error that throw this
     public ResponseEntity<ErrorResponse> handleVerificationCodeExpiredException(
             VerificationCodeExpiredException ex, HttpServletRequest request) {
         logger.warn("Verification code expired: {}", ex.getMessage());

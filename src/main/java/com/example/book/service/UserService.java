@@ -2,6 +2,7 @@ package com.example.book.service;
 
 import com.example.book.dto.BookingDto;
 import com.example.book.dto.UserDto;
+import com.example.book.exception.UserNotFoundException;
 import com.example.book.model.Booking;
 import com.example.book.model.BookingStatus;
 import com.example.book.model.User;
@@ -31,12 +32,12 @@ public class UserService {
             User user = optionalUser.get();
             return user.getBookings();
         }else {
-            return null;
+            throw new UserNotFoundException("USER_NOT_FOUND");
         }
     }
 
     public User updateUser(UserDto input, String email){
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new RuntimeException("User Not Found"));
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("USER_NOT_FOUND"));
 
         user.setFirst_name(input.getFirst_name());
         user.setLast_name(input.getLast_name());
