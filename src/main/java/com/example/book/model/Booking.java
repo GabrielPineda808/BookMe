@@ -61,6 +61,7 @@ public class Booking extends AuditableBase {
         this.end = end;
     }
 
+
     public BookingStatus getStatus() {
         return status;
     }

@@ -34,4 +34,9 @@ public class ServiceController {
 
         return ResponseEntity.ok(ServiceResponse.fromService(service1));
     }
+
+    //update a service like times name and stuff but need to see how it affects already made bookings and how to change it.
+
+    //delete a service and how to handle deleting a service plus all its bookings and proposed bookings
+
 }

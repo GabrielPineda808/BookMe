@@ -50,4 +50,6 @@ public class BookingController {
         return ResponseEntity.ok(BookingResponse.fromBooking(booking,email));
     }
 
+    //update booking from user and from service from proposal but will create BookingChangeController
+
 }
