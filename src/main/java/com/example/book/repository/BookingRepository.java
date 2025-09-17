@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -43,5 +44,16 @@ where b.service.id = :serviceId
                           @Param("booking_end") LocalTime booking_end,
                           @Param("status")BookingStatus status);
 
+    // Find bookings by service ID and status list
+    List<Booking> findByServiceIdAndStatusIn(Long serviceId, List<BookingStatus> statuses);
+
+    // Find bookings by user
+    List<Booking> findByUser(User user);
+
+    // Find bookings by user ID
+    List<Booking> findByUserId(Long userId);
+
+    // Find bookings by service
+    List<Booking> findByServiceId(Long serviceId);
 
 }
