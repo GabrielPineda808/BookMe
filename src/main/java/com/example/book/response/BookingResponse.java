@@ -23,11 +23,14 @@ public class BookingResponse {
         BookingResponse resp = new BookingResponse();
         resp.setId(booking.getId());
         resp.setServiceId(booking.getService().getId());
+        resp.setServiceName(booking.getService().getService_name());
+        resp.setServiceHandle(booking.getService().getHandle());
         resp.setStatus(String.valueOf(booking.getStatus()));
         resp.setStart(booking.getStart().toString());
         resp.setEnd(booking.getEnd().toString());
         resp.setDate(booking.getDate().toString());
         resp.setCreatedAt(booking.getCreatedAt().toString());
+        resp.setUpdatedAt(booking.getUpdatedAt().toString());
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime start = LocalDateTime.of(booking.getDate(), booking.getStart());
