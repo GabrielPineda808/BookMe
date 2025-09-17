@@ -9,11 +9,13 @@ import com.example.book.repository.BookingRepository;
 import com.example.book.repository.ServiceRepository;
 import com.example.book.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.AssertTrue;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 
 @Service
 public class BookingService {
@@ -29,10 +31,11 @@ public class BookingService {
 
     @Transactional
     public Booking createBooking(BookingDto input, String email){
-        System.out.println("booking service");
+
         if (!input.getEnd().isAfter(input.getStart())) {
             throw new BookingTimeValidationException("End time must be after start time.");
         }
+
 
         //Booking is within service hours
 
@@ -43,6 +46,11 @@ public class BookingService {
 
         com.example.book.model.Service service = serviceRepository.findById(input.getServiceId())
                 .orElseThrow(()-> new ServiceNotFoundException("Service Not Found"));
+
+        long minutesDifference = Math.abs(ChronoUnit.MINUTES.between(input.getStart(), input.getEnd()));
+        if(minutesDifference != service.getInterval()){
+            throw new BookingDurationException("Booking duration does not match Service interval");
+        }
 
 
 
