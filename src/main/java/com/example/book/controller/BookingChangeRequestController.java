@@ -36,14 +36,43 @@ public class BookingChangeRequestController {
     }
     //need to create new proposal from the user or the service owner
 
-    //update new proposal from the user or the service owner
-    @PostMapping("/{id}/accept-proposal")
-    public ResponseEntity<?> acceptProposal(@PathVariable Long id, @AuthenticationPrincipal(expression = "username") String email){
-        Booking bookingChangeRequest = bcrs.acceptProposal(id, email);
-        return ResponseEntity.ok(BookingResponse.fromBooking(bookingChangeRequest));
+    //accept proposal as the user or the service owner
+    @PutMapping("/{id}/user-accept")
+    public ResponseEntity<?> userAcceptProposal(@PathVariable Long id, @AuthenticationPrincipal(expression = "username") String email){
+        Booking updatedBooking = bcrs.acceptProposal(id, email);
+        return ResponseEntity.ok(BookingResponse.fromBooking(updatedBooking, email));
     }
 
-    //accept proposal as the user or the service owner
+    //decline proposal as the user
+    @PutMapping("/{id}/user-decline")
+    public ResponseEntity<?> userDeclineProposal(@PathVariable Long id, @RequestParam(required = false) String reason, @AuthenticationPrincipal(expression = "username") String email){
+        Booking booking = bcrs.declineProposal(id, email, reason);
+        return ResponseEntity.ok(BookingResponse.fromBooking(booking, email));
+    }
 
-    //delete/cancel/expire proposal as the user or the service owner
+    //get pending change requests for the user
+    @GetMapping("/user-pending")
+    public ResponseEntity<?> getUserPendingChangeRequests(@AuthenticationPrincipal(expression = "username") String email){
+        return ResponseEntity.ok(bcrs.getPendingChangeRequestsForUser(email));
+    }
+
+    //get pending change requests for service owners
+    @GetMapping("/service-pending")
+    public ResponseEntity<?> getServicePendingChangeRequests(@AuthenticationPrincipal(expression = "username") String email){
+        return ResponseEntity.ok(bcrs.getPendingChangeRequestsForServiceOwner(email));
+    }
+
+    //get change request by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getChangeRequest(@PathVariable Long id){
+        return ResponseEntity.ok(bcrs.getChangeRequestById(id));
+    }
+
+    //expire old change requests
+    @PostMapping("/expire-old")
+    public ResponseEntity<?> expireOldChangeRequests(){
+        bcrs.expireOldChangeRequests();
+        return ResponseEntity.ok("Old change requests expired successfully");
+    }
+
 }
