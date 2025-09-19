@@ -24,18 +24,6 @@ public class UserService {
         this.bookingService = bookingService;
     }
 
-
-    public List<Booking> getAllBookings(String email){
-        Optional<User> optionalUser = userRepository.findByEmail(email);
-
-        if(optionalUser.isPresent()){
-            User user = optionalUser.get();
-            return user.getBookings();
-        }else {
-            throw new UserNotFoundException("USER_NOT_FOUND");
-        }
-    }
-
     public User updateUser(UserDto input, String email){
         User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("USER_NOT_FOUND"));
 
@@ -45,5 +33,9 @@ public class UserService {
 
         return userRepository.save(user);
 
+    }
+
+    public User findUserByUsername(String email){
+        return userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("USER_NOT_FOUND"));
     }
 }

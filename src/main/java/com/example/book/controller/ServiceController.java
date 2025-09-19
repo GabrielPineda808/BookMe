@@ -23,7 +23,7 @@ public class ServiceController {
         this.serviceService = serviceService;
     }
 
-    @PostMapping("/create")
+    @PostMapping("/create-service")
     public ResponseEntity<?> createService(@Valid @RequestBody ServiceDto input, @AuthenticationPrincipal(expression = "username") String email){
         Service service = serviceService.createService(input, email);
         return ResponseEntity.ok(ServiceResponse.fromService(service));
@@ -36,9 +36,7 @@ public class ServiceController {
     }
 
     @DeleteMapping("/{id}/delete")
-    public ResponseEntity<?> deleteService(@PathVariable Long id, 
-                                         @RequestParam(defaultValue = "false") boolean forceDelete,
-                                         @AuthenticationPrincipal(expression = "username") String email){
+    public ResponseEntity<?> deleteService(@PathVariable Long id, @RequestParam(defaultValue = "false") boolean forceDelete, @AuthenticationPrincipal(expression = "username") String email){
         serviceService.deleteService(id, email, forceDelete);
         return ResponseEntity.ok("Service deleted successfully");
     }

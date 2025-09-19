@@ -27,13 +27,13 @@ public class ReviewController {
         return ResponseEntity.ok(ReviewResponse.from(review));
     }
 
-    @PostMapping("/{id}/update")
+    @PutMapping("/{id}/update-review")
     public ResponseEntity<?> updateReview(@PathVariable Long id, @Valid @RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){
         Review review = reviewService.updateReview(id, input, email);
         return ResponseEntity.ok(ReviewResponse.from(review));
     }
 
-    @PostMapping("/{id}/delete")
+    @DeleteMapping("/{id}/delete-review")
     public ResponseEntity<?> deleteReview(@PathVariable Long id, @AuthenticationPrincipal(expression = "username") String email){
         return reviewService.deleteReview(id, email);
     }

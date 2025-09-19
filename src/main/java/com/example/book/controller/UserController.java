@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,14 +26,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    //need to make sure that all our bookings include any booking no matter the staus and proposed bookigns all at once
-    //to didsplay on our UI
-    @GetMapping
-    public ResponseEntity<?> getAllBookings(@RequestBody String email){
-        List<Booking> bookings = userService.getAllBookings(email);
-        return ResponseEntity.ok(bookings);
-    }
 
+    @GetMapping("/profile")
+    public ResponseEntity<?> myProfile(@AuthenticationPrincipal(expression = "username") String email){
+        User user = userService.findUserByUsername(email);
+        return ResponseEntity.ok(UserDto.from(user));
+    }
 
     //see if this affects bookings
     @PostMapping("/update")
@@ -41,7 +40,39 @@ public class UserController {
         return ResponseEntity.ok(UserDto.from(user));
     }
 
-    //delete user profile and how it affecst bookings
+    //change password where the user passes in old password and then new pasword plus password confirmation then we change it
+    //front end will have to send encoded password
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto input, @AuthenticationPrincipal(expression = "username") String email){
+
+    }
+
+    //delete user account aka disable it not actaully delete we update isEnablec
+    @PutMapping("/delete-account")
+    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal(expression = "username") String email){
+
+    }
+
+    //change email
+    //confirm email change
+    //send verification
+
+    //add phone number and 2fa
+
+    //all my items
+//    GET /bookings?status=&page=&size=
+//
+//    GET /reviews?page=&size=
+//
+//    GET /services?page=&size= (if user can be a provider)
+//
+//    GET /favorites
+//
+//    POST favorites/{serviceId}
+//
+//    DELETE favorites/{serviceId}
+
+
 
 
 

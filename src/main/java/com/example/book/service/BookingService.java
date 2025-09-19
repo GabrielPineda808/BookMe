@@ -16,6 +16,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -198,5 +199,17 @@ public class BookingService {
         //
         //Log who accepted the booking and when, so disputes can be resolved.
         return true;
+    }
+
+    public List<Booking> getBookingsByOwner(String email) {
+        User owner = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return bookingRepository.findByUser(owner);
+    }
+
+    public List<Booking> getBookingsByService(Long id, String email) {
+        User owner = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+        return serviceRepository.findBookingsByService(owner, id);
     }
 }
