@@ -8,6 +8,7 @@ import com.example.book.model.Role;
 import com.example.book.model.User;
 import com.example.book.repository.UserRepository;
 import jakarta.mail.MessagingException;
+import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,8 +33,20 @@ public class AuthenticationService {
         this.emailService = emailService;
     }
 
+    @Transactional
     public User signup(RegisterUserDto input){
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        Optional<User> existingOptional = userRepository.findByEmail(input.getEmail());
+        if (existingOptional.isPresent()) {
+            User existing = existingOptional.get();
+            if (!existing.isEnabled()) {
+                // Reactivate disabled user
+                existing.setEnabled(true);
+                return userRepository.save(existing);
+            } else {
+                throw new RuntimeException("User with this email already exists");
+            }
+        }
         User user = new User(passwordEncoder.encode(input.getPassword()),input.getEmail(),input.getFirst_name(),input.getLast_name());
         user.setLocation(null);
         user.setRole(Role.USER);
