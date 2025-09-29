@@ -46,6 +46,8 @@ public class User extends AuditableBase implements UserDetails {
     @Column(nullable = false)
     private boolean enabled;
 
+    private boolean phoneEnabled;
+
     private String verification_code;
 
     private LocalDateTime verification_expiration;
@@ -55,6 +57,11 @@ public class User extends AuditableBase implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     private List<Review> reviews;
+
+    private String twoFactorCode;
+
+    private LocalDateTime twoFactorExpiration;
+
 
     @Embedded
     @AttributeOverrides({
