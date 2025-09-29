@@ -57,6 +57,21 @@ public class AuthenticationService {
         return userRepository.save(user);
     }
 
+
+    public void requestEmailChange(String currentEmail, String newEmail) {
+        User user = userRepository.findByEmail(currentEmail)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        // Store new email temporarily in user entity or a separate field
+        user.setEmail(newEmail);
+        user.setVerification_code(generateVerificationCode());
+        user.setVerification_expiration(LocalDateTime.now().plusMinutes(15));
+
+        userRepository.save(user);
+
+        sendVerificationEmail(user); // send to pendingEmail
+    }
+
     public void verifyUser(VerifyUserDto input){
         Optional<User> optionalUser = userRepository.findByEmail(input.getEmail());
         if(optionalUser.isPresent()){
