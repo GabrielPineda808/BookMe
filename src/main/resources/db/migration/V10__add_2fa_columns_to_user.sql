@@ -1,0 +1,4 @@
+ALTER TABLE "user"
+ADD COLUMN two_factor_code VARCHAR(255),
+ADD COLUMN two_factor_expiration TIMESTAMP WITHOUT TIME ZONE,
+ADD COLUMN phone_enabled BOOLEAN NOT NULL DEFAULT false;
