@@ -51,8 +51,9 @@ public class UserController {
 
     //delete user account aka disable it not actaully delete we update isEnablec
     @PutMapping("/delete-account")
-    public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal(expression = "username") String email){
-
+    public ResponseEntity<?> disableUser(@AuthenticationPrincipal(expression = "username") String email){
+        userService.disableUser(email);
+        return ResponseEntity.noContent().build();
     }
 
     //change email
