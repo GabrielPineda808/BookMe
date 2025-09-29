@@ -1,14 +1,18 @@
 package com.example.book.service;
 
 import com.example.book.dto.BookingDto;
+import com.example.book.dto.ChangePasswordDto;
 import com.example.book.dto.UserDto;
+import com.example.book.exception.PasswordsDoNotMatchException;
 import com.example.book.exception.UserNotFoundException;
 import com.example.book.model.Booking;
 import com.example.book.model.BookingStatus;
 import com.example.book.model.User;
 import com.example.book.repository.BookingRepository;
 import com.example.book.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,11 +21,12 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final BookingService bookingService;
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, BookingService bookingService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.bookingService = bookingService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User updateUser(UserDto input, String email){
@@ -37,5 +42,16 @@ public class UserService {
 
     public User findUserByUsername(String email){
         return userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("USER_NOT_FOUND"));
+    }
+
+    public void changePassword(ChangePasswordDto input, String email){
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND"));
+
+        if (!passwordEncoder.matches(input.getOldPassword(), user.getPassword())) {
+            throw new PasswordsDoNotMatchException("PASSWORDS_DO_NOT_MATCH");
+        }
+
+        user.setPassword(passwordEncoder.encode(input.getNewPassword()));
+        userRepository.save(user);
     }
 }
