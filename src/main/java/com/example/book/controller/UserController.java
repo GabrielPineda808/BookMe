@@ -1,10 +1,12 @@
 package com.example.book.controller;
 
+import com.example.book.dto.ChangeEmailRequestDto;
 import com.example.book.dto.ChangePasswordDto;
 import com.example.book.dto.RegisterUserDto;
 import com.example.book.dto.UserDto;
 import com.example.book.model.Booking;
 import com.example.book.model.User;
+import com.example.book.service.AuthenticationService;
 import com.example.book.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,11 @@ import java.util.Optional;
 @CrossOrigin
 public class UserController {
     private UserService userService;
+    private AuthenticationService authenticationService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, AuthenticationService authenticationService) {
         this.userService = userService;
+        this.authenticationService = authenticationService;
     }
 
 
@@ -57,6 +61,16 @@ public class UserController {
     }
 
     //change email
+    @PutMapping("/change-email")
+    public ResponseEntity<?> requestEmailChange(
+            @Valid @RequestBody ChangeEmailRequestDto input,
+            @AuthenticationPrincipal(expression = "username") String email) {
+
+        authenticationService.requestEmailChange(email, input.getNewEmail());
+
+        return ResponseEntity.ok("Email Change Request Sent");
+    }
+
     //confirm email change
     //send verification
 
