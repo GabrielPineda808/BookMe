@@ -75,6 +75,26 @@ public class UserController {
         return ResponseEntity.ok("Phone update request sent");
     }
 
+    @PostMapping("/verify-phone")
+    public ResponseEntity<?> verifyUserPhone(@RequestBody String code, @AuthenticationPrincipal(expression = "username") String email){
+        try {
+            userService.verifyUserPhone(code, email);
+            return ResponseEntity.ok("Account Verified Successfully");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/resend-2FA")
+    public ResponseEntity<?> resend(@RequestParam String email){
+        try {
+            userService.resend2FA(email);
+            return ResponseEntity.ok("Verification Code Resent");
+        }catch (RuntimeException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     //all my items
 //    GET /bookings?status=&page=&size=
 //
