@@ -64,4 +64,14 @@ public class UserService {
         userRepository.save(user);
 
     }
+
+    public void updatePhone(String email, String phone) {
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("USER_NOT_FOUND"));
+        if(user.getPhone().equals(phone)){
+            throw new RuntimeException("Phone Number Already In Use");
+        }
+        user.setPhone(phone);
+        userRepository.save(user);
+    }
+
 }

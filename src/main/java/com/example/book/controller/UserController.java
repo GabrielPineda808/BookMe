@@ -1,9 +1,6 @@
 package com.example.book.controller;
 
-import com.example.book.dto.ChangeEmailRequestDto;
-import com.example.book.dto.ChangePasswordDto;
-import com.example.book.dto.RegisterUserDto;
-import com.example.book.dto.UserDto;
+import com.example.book.dto.*;
 import com.example.book.model.Booking;
 import com.example.book.model.User;
 import com.example.book.service.AuthenticationService;
@@ -71,10 +68,12 @@ public class UserController {
         return ResponseEntity.ok("Email Change Request Sent");
     }
 
-    //confirm email change
-    //send verification
-
     //add phone number and 2fa
+    @PutMapping("/update-phone")
+    public ResponseEntity<?> updatePhone(@Valid@RequestBody UpdatePhoneDto input, @AuthenticationPrincipal(expression = "username") String email){
+        userService.updatePhone(input.getPhone(), email);
+        return ResponseEntity.ok("Phone update request sent");
+    }
 
     //all my items
 //    GET /bookings?status=&page=&size=
