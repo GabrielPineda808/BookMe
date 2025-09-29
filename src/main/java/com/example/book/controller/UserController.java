@@ -1,5 +1,6 @@
 package com.example.book.controller;
 
+import com.example.book.dto.ChangePasswordDto;
 import com.example.book.dto.RegisterUserDto;
 import com.example.book.dto.UserDto;
 import com.example.book.model.Booking;
@@ -44,7 +45,8 @@ public class UserController {
     //front end will have to send encoded password
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto input, @AuthenticationPrincipal(expression = "username") String email){
-
+        userService.changePassword(input, email);
+        return ResponseEntity.ok().body("Password Changed");
     }
 
     //delete user account aka disable it not actaully delete we update isEnablec
