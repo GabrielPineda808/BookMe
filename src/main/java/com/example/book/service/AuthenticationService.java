@@ -63,6 +63,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
 
         // Store new email temporarily in user entity or a separate field
+        user.setEnabled(false);
         user.setEmail(newEmail);
         user.setVerification_code(generateVerificationCode());
         user.setVerification_expiration(LocalDateTime.now().plusMinutes(15));
