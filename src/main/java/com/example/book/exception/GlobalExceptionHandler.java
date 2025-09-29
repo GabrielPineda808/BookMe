@@ -555,6 +555,20 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errorResponse);
     }
+
+    @ExceptionHandler(PasswordsDoNotMatchException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordsDoNotMatchException(
+            PasswordsDoNotMatchException ex, HttpServletRequest request
+    ){
+        logger.warn("Passwords do not match: {}", ex.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(
+                "PASSWORDS_DO_NOT_MATCH",
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
 }
 
 
