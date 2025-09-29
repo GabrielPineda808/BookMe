@@ -2,6 +2,7 @@ package com.example.book.controller;
 
 import com.example.book.dto.LoginUserDto;
 import com.example.book.dto.RegisterUserDto;
+import com.example.book.dto.UserDto;
 import com.example.book.dto.VerifyUserDto;
 import com.example.book.model.User;
 import com.example.book.response.LoginResponse;
@@ -32,9 +33,9 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@Valid @RequestBody RegisterUserDto registerUserDto){
+    public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserDto registerUserDto){
         User registeredUser = authenticationService.signup(registerUserDto);
-        return ResponseEntity.ok(registeredUser);
+        return ResponseEntity.ok(UserDto.from(registeredUser));
     }
 
     @PostMapping("/verify")
@@ -56,7 +57,5 @@ public class AuthenticationController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-    //forgot password endpoint and logic
 
 }
