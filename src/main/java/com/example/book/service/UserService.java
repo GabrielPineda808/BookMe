@@ -54,4 +54,13 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(input.getNewPassword()));
         userRepository.save(user);
     }
+
+    public void disableUser(String email){
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("USER_NOT_FOUND"));
+
+        user.setEnabled(false);
+
+        userRepository.save(user);
+
+    }
 }
