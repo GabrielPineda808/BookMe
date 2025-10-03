@@ -1,5 +1,6 @@
 package com.example.book.service;
 
+import com.example.book.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -32,11 +33,18 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(), userDetails);
+    public String generateToken(User userDetails){
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("userId", userDetails.getId());
+        extraClaims.put("username", userDetails.getUsername());
+        extraClaims.put("firstName", userDetails.getFirst_name());
+        extraClaims.put("lastName", userDetails.getLast_name());
+        extraClaims.put("location", userDetails.getLocation());
+
+        return generateToken(extraClaims, userDetails);
     }
 
-    public String generateToken(Map<String,Object> extraClaims,UserDetails userDetails){
+    public String generateToken(Map<String,Object> extraClaims,User userDetails){
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
