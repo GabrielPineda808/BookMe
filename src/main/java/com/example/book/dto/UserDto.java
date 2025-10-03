@@ -15,6 +15,10 @@ import java.util.List;
 @Setter
 public class UserDto {
 
+    private Long id;
+
+    private String email;
+
     @NotBlank(message = "First name is required")
     @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
     @Pattern(regexp = "^[a-zA-Z\\s'-]+$", message = "First name can only contain letters, spaces, hyphens, and apostrophes")
@@ -30,12 +34,20 @@ public class UserDto {
 
     public static UserDto from(User user) {
         UserDto resp = new UserDto();
-
+        resp.setId(user.getId());
         resp.setFirst_name(user.getFirst_name());
         resp.setLast_name(user.getLast_name());
         resp.setLocation(user.getLocation());
 
         return resp;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirst_name() {
