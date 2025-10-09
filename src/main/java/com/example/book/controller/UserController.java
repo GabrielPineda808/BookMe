@@ -42,14 +42,6 @@ public class UserController {
         return ResponseEntity.ok(UserDto.from(user));
     }
 
-    //change password where the user passes in old password and then new pasword plus password confirmation then we change it
-    //front end will have to send encoded password
-    @PutMapping("/change-password")
-    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto input, @AuthenticationPrincipal(expression = "username") String email){
-        userService.changePassword(input, email);
-        return ResponseEntity.ok().body("Password Changed");
-    }
-
     //delete user account aka disable it not actaully delete we update isEnablec
     @PutMapping("/delete-account")
     public ResponseEntity<?> disableUser(@AuthenticationPrincipal(expression = "username") String email){
