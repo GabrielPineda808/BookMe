@@ -15,7 +15,7 @@ public class VerifyUserDto {
     
     @NotBlank(message = "Verification code is required")
     @Pattern(regexp = "^\\d{6}$", message = "Verification code must be exactly 6 digits")
-    private String verification_code;
+    private String verificationCode;
 
     public String getEmail() {
         return email;
@@ -25,11 +25,11 @@ public class VerifyUserDto {
         this.email = email;
     }
 
-    public String getVerification_code() {
-        return verification_code;
+    public @NotBlank(message = "Verification code is required") @Pattern(regexp = "^\\d{6}$", message = "Verification code must be exactly 6 digits") String getVerificationCode() {
+        return verificationCode;
     }
 
-    public void setVerification_code(String verification_code) {
-        this.verification_code = verification_code;
+    public void setVerificationCode(@NotBlank(message = "Verification code is required") @Pattern(regexp = "^\\d{6}$", message = "Verification code must be exactly 6 digits") String verificationCode) {
+        this.verificationCode = verificationCode;
     }
 }

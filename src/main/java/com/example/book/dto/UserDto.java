@@ -35,11 +35,20 @@ public class UserDto {
     public static UserDto from(User user) {
         UserDto resp = new UserDto();
         resp.setId(user.getId());
+        resp.setEmail(user.getEmail());
         resp.setFirst_name(user.getFirst_name());
         resp.setLast_name(user.getLast_name());
         resp.setLocation(user.getLocation());
 
         return resp;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public Long getId() {
