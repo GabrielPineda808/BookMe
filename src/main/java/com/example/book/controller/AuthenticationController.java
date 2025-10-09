@@ -1,6 +1,7 @@
 package com.example.book.controller;
 
 import com.example.book.dto.*;
+import com.example.book.exception.AccountNotVerifiedException;
 import com.example.book.model.TokenPurpose;
 import com.example.book.model.User;
 import com.example.book.repository.UserRepository;
@@ -89,6 +90,9 @@ public class AuthenticationController {
 
 
         userRepository.findByEmailIgnoreCase(email).ifPresent(user -> {
+            if(!user.isEnabled()){
+                throw new AccountNotVerifiedException("ACCOUNT_NOT_ENABLED");
+            }
             // create RESET token, TTL 15 minutes
             String rawToken = tokenService.createTokenFor(user, TokenPurpose.PASSWORD_RESET, Duration.ofMinutes(15));
 
