@@ -1,4 +1,7 @@
 package com.example.book.model;
 
-public class TokenPurpose {
+public enum TokenPurpose {
+    VERIFICATION,
+    PASSWORD_RESET
 }
+
