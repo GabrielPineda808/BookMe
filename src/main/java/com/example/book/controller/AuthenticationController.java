@@ -1,16 +1,23 @@
 package com.example.book.controller;
 
-import com.example.book.dto.LoginUserDto;
-import com.example.book.dto.RegisterUserDto;
-import com.example.book.dto.UserDto;
-import com.example.book.dto.VerifyUserDto;
+import com.example.book.dto.*;
+import com.example.book.model.TokenPurpose;
 import com.example.book.model.User;
+import com.example.book.repository.UserRepository;
 import com.example.book.response.LoginResponse;
-import com.example.book.service.AuthenticationService;
-import com.example.book.service.JwtService;
+import com.example.book.service.*;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Map;
 
 @RequestMapping("/auth")
 @RestController
@@ -18,10 +25,18 @@ import org.springframework.web.bind.annotation.*;
 public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
+    private final UserRepository userRepository;
+    private final TokenService tokenService;
+    private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
+    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, UserRepository userRepository, TokenService tokenService, EmailService emailService, PasswordEncoder passwordEncoder) {
         this.jwtService = jwtService;
         this.authenticationService = authenticationService;
+        this.userRepository = userRepository;
+        this.tokenService = tokenService;
+        this.emailService = emailService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
@@ -49,13 +64,65 @@ public class AuthenticationController {
     }
 
     @PostMapping("/resend")
-    public ResponseEntity<?> resend(@RequestParam String email){
+    public ResponseEntity<?> resend(@RequestBody ResendEmailRequestDto input){
         try {
-            authenticationService.resendVerification(email);
+            authenticationService.resendVerification(input);
             return ResponseEntity.ok("Verification Code Resent");
         }catch (RuntimeException e){
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
+    //change password where the user passes in old password and then new pasword plus password confirmation then we change it
+    //front end will have to send encoded password
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto input, @AuthenticationPrincipal(expression = "username") String email){
+        authenticationService.changePassword(input, email);
+        return ResponseEntity.ok().body("Password Changed");
+    }
+
+    @PostMapping("/forgot")
+    public ResponseEntity<?> forgotPassword(@RequestBody String emailRaw) {
+        if (emailRaw == null) return ResponseEntity.ok(Map.of("message","If an account exists, we've sent instructions."));
+
+        String email = emailRaw.trim().toLowerCase();
+
+
+        userRepository.findByEmailIgnoreCase(email).ifPresent(user -> {
+            // create RESET token, TTL 15 minutes
+            String rawToken = tokenService.createTokenFor(user, TokenPurpose.PASSWORD_RESET, Duration.ofMinutes(15));
+
+            // Build a reset link for frontend
+            String link = "http://localhost:5173/reset-password?token=" +
+                    URLEncoder.encode(rawToken, StandardCharsets.UTF_8) +
+                    "&email=" + URLEncoder.encode(user.getEmail(), StandardCharsets.UTF_8);
+
+            try {
+                emailService.sendVerificationEmail(user.getEmail(), "Reset your password", link); // implement email method
+            } catch (MessagingException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        // Always return neutral result to avoid user enumeration
+        return ResponseEntity.ok(Map.of("message","If an account exists, we've sent reset instructions."));
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetDto dto) {
+        String email = dto.getEmail().trim().toLowerCase();
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid token or email"));
+
+        // validate token & mark used
+        tokenService.validateAndConsumeToken(user, TokenPurpose.PASSWORD_RESET, dto.getToken());
+
+        user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
+
+        // optionally send a notification
+        // emailService.sendPasswordChangeNotification(user.getEmail());
+
+        return ResponseEntity.ok(Map.of("message","Password changed"));
+    }
 }
