@@ -83,6 +83,30 @@ public class User extends AuditableBase implements UserDetails {
         this.last_name = last_name;
     }
 
+    public boolean isPhoneEnabled() {
+        return phoneEnabled;
+    }
+
+    public void setPhoneEnabled(boolean phoneEnabled) {
+        this.phoneEnabled = phoneEnabled;
+    }
+
+    public String getTwoFactorCode() {
+        return twoFactorCode;
+    }
+
+    public void setTwoFactorCode(String twoFactorCode) {
+        this.twoFactorCode = twoFactorCode;
+    }
+
+    public LocalDateTime getTwoFactorExpiration() {
+        return twoFactorExpiration;
+    }
+
+    public void setTwoFactorExpiration(LocalDateTime twoFactorExpiration) {
+        this.twoFactorExpiration = twoFactorExpiration;
+    }
+
     public Long getId() {
         return id;
     }
