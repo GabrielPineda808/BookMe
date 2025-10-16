@@ -46,16 +46,6 @@ public class UserService {
         return userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("USER_NOT_FOUND"));
     }
 
-    public void changePassword(ChangePasswordDto input, String email){
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("USER_NOT_FOUND"));
-
-        if (!passwordEncoder.matches(input.getOldPassword(), user.getPassword())) {
-            throw new PasswordsDoNotMatchException("PASSWORDS_DO_NOT_MATCH");
-        }
-
-        user.setPassword(passwordEncoder.encode(input.getNewPassword()));
-        userRepository.save(user);
-    }
 
     public void disableUser(String email){
         User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("USER_NOT_FOUND"));

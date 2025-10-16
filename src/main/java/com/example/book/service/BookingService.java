@@ -206,10 +206,4 @@ public class BookingService {
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
         return bookingRepository.findByUser(owner);
     }
-
-    public List<Booking> getBookingsByService(Long id, String email) {
-        User owner = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-        return serviceRepository.findBookingsByService(owner, id);
-    }
 }

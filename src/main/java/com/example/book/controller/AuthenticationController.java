@@ -22,7 +22,7 @@ import java.util.Map;
 
 @RequestMapping("/auth")
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins ={"http://localhost:5173", "http://localhost:3000"})
 public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
@@ -83,10 +83,12 @@ public class AuthenticationController {
     }
 
     @PostMapping("/forgot")
-    public ResponseEntity<?> forgotPassword(@RequestBody String emailRaw) {
-        if (emailRaw == null) return ResponseEntity.ok(Map.of("message","If an account exists, we've sent instructions."));
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> input) {
+        System.out.println("forgot");
+        System.out.println(input);
+        if (input.get("email") == null) return ResponseEntity.ok(Map.of("message","If an account exists, we've sent instructions."));
 
-        String email = emailRaw.trim().toLowerCase();
+        String email = input.get("email").trim().toLowerCase();
 
 
         userRepository.findByEmailIgnoreCase(email).ifPresent(user -> {

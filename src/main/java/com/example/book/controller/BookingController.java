@@ -62,11 +62,4 @@ public class BookingController {
         List<Booking> bookings = bookingService.getBookingsByOwner(email);
         return ResponseEntity.ok(bookings.stream().map((booking)->BookingResponse.fromBooking(booking,email)).toList());
     }
-
-    //find booking by service, etc.
-    @GetMapping("/search/service/{id}")
-    public ResponseEntity<?> getBookingsByService(@PathVariable Long id, @AuthenticationPrincipal(expression = "username") String email){
-        List<Booking> bookings = bookingService.getBookingsByService(id, email);
-        return ResponseEntity.ok(bookings.stream().map((b)->BookingResponse.fromBooking(b,email)).toList());
-    }
 }
