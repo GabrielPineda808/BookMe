@@ -62,10 +62,13 @@ public class Service extends AuditableBase {
     private LocalTime close;
 
     @OneToMany(mappedBy = "service")
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "service")
-    private List<Booking> bookings;
+    private List<Booking> bookings = new ArrayList<>();
+
+    @Column(nullable = false)
+    private boolean enabled;
 
     public Service() {
     }
@@ -76,6 +79,14 @@ public class Service extends AuditableBase {
         this.location = location;
         this.reviews = reviews;
         this.bookings = bookings;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setId(Long id) {
