@@ -36,6 +36,11 @@ public class ServiceService {
     }
 
     @Transactional
+    public List<com.example.book.model.Service> getAllServices(){
+        return serviceRepository.findAll().stream().filter(com.example.book.model.Service::isEnabled).toList();
+    }
+
+    @Transactional
     public com.example.book.model.Service createService(ServiceDto input, String email){
         User owner = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
