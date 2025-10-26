@@ -1,10 +1,13 @@
 package com.example.book.controller;
 
 import com.example.book.dto.ServiceDto;
+import com.example.book.model.Booking;
 import com.example.book.model.Service;
+import com.example.book.response.BookingResponse;
 import com.example.book.response.ServiceResponse;
 import com.example.book.service.ServiceService;
 import jakarta.validation.Valid;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,13 +17,19 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/service")
-@PreAuthorize("hasAuthority('ROLE_USER')")
+@PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
 public class ServiceController {
     private final ServiceService serviceService;
 
     public ServiceController(ServiceService serviceService) {
         this.serviceService = serviceService;
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllServices(){
+        List<Service> services = serviceService.getAllServices();
+        return ResponseEntity.ok(services.stream().map(ServiceResponse::fromService).toList());
     }
 
     @PostMapping("/create-service")
