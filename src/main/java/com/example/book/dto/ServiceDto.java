@@ -9,12 +9,12 @@ import java.time.LocalTime;
 public class ServiceDto {
 
     @NotBlank(message = "Service handle is required")
-    @Size(min = 3, max = 50, message = "Handle must be between 3 and 50 characters")
+    @Size(min = 3, max = 10, message = "Handle must be between 3 and 10 characters")
     @Pattern(regexp = "^[a-zA-Z0-9_-]+$", message = "Handle can only contain letters, numbers, hyphens, and underscores")
     private String handle;
 
     @NotBlank(message = "Service name is required")
-    @Size(min = 2, max = 100, message = "Service name must be between 2 and 100 characters")
+    @Size(min = 2, max = 50, message = "Service name must be between 2 and 50 characters")
     private String service_name;
 
     private LocationDto location;
