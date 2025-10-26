@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
-@PreAuthorize("hasAuthority('ROLE_USER')")
+@PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
 public class BookingController {
     private final BookingService bookingService;

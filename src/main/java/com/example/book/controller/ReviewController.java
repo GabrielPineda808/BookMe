@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/reviews")
-@PreAuthorize("hasAuthority('ROLE_USER')")
+@PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
 public class ReviewController {
     private final ReviewService reviewService;

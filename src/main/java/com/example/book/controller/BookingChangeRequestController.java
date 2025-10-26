@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/change-booking")
-@PreAuthorize("hasAuthority('ROLE_USER')")
+@PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
 public class BookingChangeRequestController {
     private final BookingChangeRequestService bcrs;

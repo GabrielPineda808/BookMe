@@ -177,27 +177,6 @@ public class BookingService {
             throw new UserNotActiveException("User Not Active");
         }
 
-        // Capacity / Resource Validation
-        //
-        //Resource availability
-        //
-        //If services can be tied to a physical resource (room, field, chair, equipment), ensure that resource isn’t already in use for the requested time.
-        //
-        //Max concurrent bookings per owner/service
-        //
-        //If owners can accept multiple bookings (e.g., multiple staff under one account), check that the service isn’t over capacity.
-        //
-        //Extra Safety & Logging
-        //
-        //Prevent race conditions
-        //
-        //If two owners/admins act on the same booking at the same time, ensure only one action succeeds.
-        //
-        //Do this with an @Transactional service layer method and check booking status right before updating.
-        //
-        //Audit/log acceptance
-        //
-        //Log who accepted the booking and when, so disputes can be resolved.
         return true;
     }
 

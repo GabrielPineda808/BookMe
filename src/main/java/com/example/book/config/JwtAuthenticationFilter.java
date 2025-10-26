@@ -48,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
 
-        // 2) No token? Don't try to parse — just continue and STOP
+        // 2) No token - just continue and STOP
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
             return;
@@ -71,15 +71,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // 3) Proceed and STOP
             filterChain.doFilter(request, response);
-            return;
 
         } catch (Exception e) {
-            // 4) Map to a real HTTP error; don't silently "resolve" to 200
-            // If you want to use the resolver, ensure it sets a status, or do this:
+            // 4) Map to HTTP error
             response.reset(); // clear any partial content
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid or expired token");
-            // or: handlerExceptionResolver.resolveException(request, response, null, e);
-            return;
         }
     }
 

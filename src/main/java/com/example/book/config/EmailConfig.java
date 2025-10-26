@@ -22,13 +22,13 @@ public class EmailConfig {
         mailSender.setHost("smtp.gmail.com"); // Gmail SMTP host
         mailSender.setPort(587);              // STARTTLS port
         mailSender.setUsername(emailUsername); // your Gmail address (or alias)
-        mailSender.setPassword(password);      // your app password (see notes below)
+        mailSender.setPassword(password);      // your app password
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");   // use SMTP
         props.put("mail.smtp.auth", "true");            // require auth (username+password or OAuth)
         props.put("mail.smtp.starttls.enable", "true"); // upgrade to TLS on port 587
-        props.put("mail.debug", "true");                // verbose logs (dev only)
+        props.put("mail.debug", "true");                // verbose logs
 
 
         return mailSender;
