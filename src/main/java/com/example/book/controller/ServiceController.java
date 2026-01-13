@@ -1,14 +1,11 @@
 package com.example.book.controller;
 
 import com.example.book.dto.ServiceDto;
-import com.example.book.model.Booking;
 import com.example.book.model.Service;
-import com.example.book.response.BookingResponse;
 import com.example.book.response.ServiceResponse;
-import com.example.book.service.ServiceService;
+import com.example.book.service.ServiceManagementService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,7 +19,7 @@ import java.util.List;
 @CrossOrigin
 @AllArgsConstructor
 public class ServiceController {
-    private final ServiceService serviceService;
+    private final ServiceManagementService serviceService;
 
     @GetMapping
     public ResponseEntity<?> getAllServices(){
@@ -80,7 +77,7 @@ public class ServiceController {
 
     @PostMapping("/{id}/analyze-impact")
     public ResponseEntity<?> analyzeServiceUpdateImpact(@PathVariable Long id, @RequestBody ServiceDto proposedChanges){
-        ServiceService.ServiceImpactAnalysis impact = serviceService.analyzeServiceUpdateImpact(id, proposedChanges);
+        ServiceManagementService.ServiceImpactAnalysis impact = serviceService.analyzeServiceUpdateImpact(id, proposedChanges);
         return ResponseEntity.ok(impact);
     }
 

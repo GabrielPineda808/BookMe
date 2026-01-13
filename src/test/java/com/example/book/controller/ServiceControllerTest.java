@@ -4,7 +4,7 @@ import com.example.book.dto.ServiceDto;
 import com.example.book.model.Role;
 import com.example.book.model.Service;
 import com.example.book.model.User;
-import com.example.book.service.ServiceService;
+import com.example.book.service.ServiceManagementService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,8 +40,9 @@ class ServiceControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @SuppressWarnings("removal") // MockBean marked for removal in newer Spring versions; safe for test wiring
     @MockBean
-    private ServiceService serviceService;
+    private ServiceManagementService serviceService;
 
     private User owner;
     private Service service;

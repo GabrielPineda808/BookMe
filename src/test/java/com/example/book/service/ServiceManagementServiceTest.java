@@ -26,7 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ServiceServiceTest {
+class ServiceManagementServiceTest {
 
     @Mock
     ServiceRepository serviceRepository;
@@ -38,7 +38,7 @@ class ServiceServiceTest {
     BookingChangeRequestRepository bookingChangeRequestRepository;
 
     @InjectMocks
-    ServiceService serviceService;
+    ServiceManagementService serviceService;
 
     private User owner;
     private Service existingService;
