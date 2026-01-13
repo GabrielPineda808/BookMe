@@ -2,7 +2,9 @@ package com.example.book.model;
 
 import com.example.book.audit.AuditableBase;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -14,6 +16,8 @@ import java.time.LocalTime;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="booking_change_request")
 @EntityListeners(AuditingEntityListener.class)
 public class BookingChangeRequest extends AuditableBase {
@@ -57,110 +61,4 @@ public class BookingChangeRequest extends AuditableBase {
     @Column(name = "expires_at")
     private LocalDateTime expires_at;// (nullable; e.g., auto-expire after N hours)
 
-    public BookingChangeRequest() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Booking getBooking() {
-        return booking;
-    }
-
-    public void setBooking(Booking booking) {
-        this.booking = booking;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDate getCurrent_date() {
-        return current_date;
-    }
-
-    public void setCurrent_date(LocalDate current_date) {
-        this.current_date = current_date;
-    }
-
-    public LocalTime getCurrent_start() {
-        return current_start;
-    }
-
-    public void setCurrent_start(LocalTime current_start) {
-        this.current_start = current_start;
-    }
-
-    public LocalTime getCurrent_end() {
-        return current_end;
-    }
-
-    public void setCurrent_end(LocalTime current_end) {
-        this.current_end = current_end;
-    }
-
-    public LocalDate getProposed_date() {
-        return proposed_date;
-    }
-
-    public void setProposed_date(LocalDate proposed_date) {
-        this.proposed_date = proposed_date;
-    }
-
-    public LocalTime getProposed_start() {
-        return proposed_start;
-    }
-
-    public void setProposed_start(LocalTime proposed_start) {
-        this.proposed_start = proposed_start;
-    }
-
-    public LocalTime getProposed_end() {
-        return proposed_end;
-    }
-
-    public void setProposed_end(LocalTime proposed_end) {
-        this.proposed_end = proposed_end;
-    }
-
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BookingStatus status) {
-        this.status = status;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public String getResponse_reason() {
-        return response_reason;
-    }
-
-    public void setResponse_reason(String response_reason) {
-        this.response_reason = response_reason;
-    }
-
-    public LocalDateTime getExpires_at() {
-        return expires_at;
-    }
-
-    public void setExpires_at(LocalDateTime expires_at) {
-        this.expires_at = expires_at;
-    }
 }

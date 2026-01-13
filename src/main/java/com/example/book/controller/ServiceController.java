@@ -7,6 +7,7 @@ import com.example.book.response.BookingResponse;
 import com.example.book.response.ServiceResponse;
 import com.example.book.service.ServiceService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.apache.catalina.connector.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,12 +20,9 @@ import java.util.List;
 @RequestMapping("/service")
 @PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
+@AllArgsConstructor
 public class ServiceController {
     private final ServiceService serviceService;
-
-    public ServiceController(ServiceService serviceService) {
-        this.serviceService = serviceService;
-    }
 
     @GetMapping
     public ResponseEntity<?> getAllServices(){

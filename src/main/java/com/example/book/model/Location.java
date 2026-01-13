@@ -2,12 +2,16 @@ package com.example.book.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Embeddable
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="location")
 public class Location {
 
@@ -33,55 +37,5 @@ public class Location {
     @Size(min = 2, max = 50, message = "State must be between 2 and 50 characters")
     @Pattern(regexp = "^[a-zA-Z\\s'-]+$", message = "State can only contain letters, spaces, hyphens, and apostrophes")
     private String state;
-
-    public Location() {
-    }
-
-    public Location(String city, String country, String address, String area_code,String state) {
-        this.city = city;
-        this.country = country;
-        this.address = address;
-        this.area_code = area_code;
-        this.state = state;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getArea_code() {
-        return area_code;
-    }
-
-    public void setArea_code(String area_code) {
-        this.area_code = area_code;
-    }
+    
 }

@@ -5,7 +5,9 @@ import com.example.book.dto.LocationDto;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -22,8 +24,9 @@ import java.util.Optional;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="service")
-@EntityListeners(AuditingEntityListener.class)
 public class Service extends AuditableBase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -70,114 +73,4 @@ public class Service extends AuditableBase {
     @Column(nullable = false)
     private boolean enabled;
 
-    public Service() {
-    }
-
-    public Service(String handle, String service_name, LocationDto location, List<Review> reviews, List<Booking> bookings) {
-        this.handle = handle;
-        this.service_name = service_name;
-        this.location = location;
-        this.reviews = reviews;
-        this.bookings = bookings;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getDesc() {
-        return desc;
-    }
-
-    public void setDesc(String desc) {
-        this.desc = desc;
-    }
-
-    public int getInterval() {
-        return interval;
-    }
-
-    public void setInterval(int interval) {
-        this.interval = interval;
-    }
-
-    public LocalTime getOpen() {
-        return open;
-    }
-
-    public void setOpen(LocalTime open) {
-        this.open = open;
-    }
-
-    public LocalTime getClose() {
-        return close;
-    }
-
-    public void setClose(LocalTime close) {
-        this.close = close;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setServiceId(Long id) {
-        this.id = id;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public String getHandle() {
-        return handle;
-    }
-
-    public void setHandle(String handle) {
-        this.handle = handle;
-    }
-
-    public String getService_name() {
-        return service_name;
-    }
-
-    public void setService_name(String service_name) {
-        this.service_name = service_name;
-    }
-
-    public LocationDto getLocation() {
-        return location;
-    }
-
-    public void setLocation(LocationDto location) {
-        this.location = location;
-    }
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void setReviews(List<Review> reviews) {
-        this.reviews = reviews;
-    }
-
-    public List<Booking> getBookings() {
-        return bookings;
-    }
-
-    public void setBookings(List<Booking> bookings) {
-        this.bookings = bookings;
-    }
 }

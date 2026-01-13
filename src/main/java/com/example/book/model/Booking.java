@@ -2,7 +2,9 @@ package com.example.book.model;
 
 import com.example.book.audit.AuditableBase;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -18,8 +20,9 @@ import java.util.Optional;
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name="booking")
-@EntityListeners(AuditingEntityListener.class)
 public class Booking extends AuditableBase {
 
     @Id
@@ -34,9 +37,9 @@ public class Booking extends AuditableBase {
     @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
-    // inside Booking entity
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")   // keep your existing name if different
+    @Column(name = "status")
     private BookingStatus status;
 
     @Column(name = "booking_start", nullable = false)
@@ -51,78 +54,4 @@ public class Booking extends AuditableBase {
     @Column(name = "booking_date", nullable = false)
     private LocalDate date;
 
-
-    public Booking() {
-    }
-
-    public Booking(LocalTime start, LocalTime end, LocalDate date) {
-        this.start = start;
-        this.date = date;
-        this.end = end;
-    }
-
-
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BookingStatus status) {
-        this.status = status;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Service getService() {
-        return service;
-    }
-
-    public void setService(Service service) {
-        this.service = service;
-    }
-
-    public LocalTime getStart() {
-        return start;
-    }
-
-    public void setStart(LocalTime start) {
-        this.start = start;
-    }
-
-    public LocalTime getEnd() {
-        return end;
-    }
-
-    public void setEnd(LocalTime end) {
-        this.end = end;
-    }
-
-    public String getNotes() {
-        return notes;
-    }
-
-    public void setNotes(String notes) {
-        this.notes = notes;
-    }
 }

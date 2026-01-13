@@ -10,6 +10,7 @@ import com.example.book.service.*;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequestMapping("/auth")
 @RestController
 @CrossOrigin(origins ={"http://localhost:5173", "http://localhost:3000"})
+@AllArgsConstructor
 public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
@@ -30,15 +32,6 @@ public class AuthenticationController {
     private final TokenService tokenService;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
-
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService, UserRepository userRepository, TokenService tokenService, EmailService emailService, PasswordEncoder passwordEncoder) {
-        this.jwtService = jwtService;
-        this.authenticationService = authenticationService;
-        this.userRepository = userRepository;
-        this.tokenService = tokenService;
-        this.emailService = emailService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginUserDto loginUserDto){
@@ -84,8 +77,6 @@ public class AuthenticationController {
 
     @PostMapping("/forgot")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> input) {
-        System.out.println("forgot");
-        System.out.println(input);
         if (input.get("email") == null) return ResponseEntity.ok(Map.of("message","If an account exists, we've sent instructions."));
 
         String email = input.get("email").trim().toLowerCase();

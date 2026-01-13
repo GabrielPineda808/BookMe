@@ -10,12 +10,4 @@ import lombok.Setter;
 public class UpdatePhoneDto {
     @NotBlank
     private String phone;
-
-    public @NotBlank String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(@NotBlank String phone) {
-        this.phone = phone;
-    }
 }

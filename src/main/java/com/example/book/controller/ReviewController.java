@@ -5,6 +5,7 @@ import com.example.book.model.Review;
 import com.example.book.response.ReviewResponse;
 import com.example.book.service.ReviewService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,12 +15,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/reviews")
 @PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
+@AllArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
-
-    public ReviewController(ReviewService reviewService) {
-        this.reviewService = reviewService;
-    }
 
     @PostMapping("/review")
     public ResponseEntity<?> createReview(@Valid @RequestBody ReviewDto input, @AuthenticationPrincipal(expression = "username") String email){

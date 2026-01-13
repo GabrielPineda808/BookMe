@@ -6,6 +6,7 @@ import com.example.book.model.User;
 import com.example.book.service.AuthenticationService;
 import com.example.book.service.UserService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -19,14 +20,10 @@ import java.util.Optional;
 @RequestMapping("/user")
 @PreAuthorize("hasRole('USER')")
 @CrossOrigin
+@AllArgsConstructor
 public class UserController {
     private UserService userService;
     private AuthenticationService authenticationService;
-
-    public UserController(UserService userService, AuthenticationService authenticationService) {
-        this.userService = userService;
-        this.authenticationService = authenticationService;
-    }
 
 
     @GetMapping("/profile")

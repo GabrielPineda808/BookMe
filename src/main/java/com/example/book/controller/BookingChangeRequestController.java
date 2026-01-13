@@ -7,6 +7,7 @@ import com.example.book.model.BookingChangeRequest;
 import com.example.book.response.BookingResponse;
 import com.example.book.service.BookingChangeRequestService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,13 +18,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/change-booking")
 @PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
+@AllArgsConstructor
 public class BookingChangeRequestController {
     private final BookingChangeRequestService bcrs;
-
-    public BookingChangeRequestController(BookingChangeRequestService bcrs) {
-        this.bcrs = bcrs;
-    }
-
 
     //user does not need to have a booking update request since we check for overlapping bookings the user cannot even
     //request for an already taken spot aka if im requesting as the user to move to a free slot its the same thing as if

@@ -44,7 +44,11 @@ public class AuthenticationService {
             sendVerificationEmail(existing);
             return existing;
         }
-        User user = new User(passwordEncoder.encode(input.getPassword()),input.getEmail(),input.getFirstName(),input.getLastName());
+        User user = new User();
+        user.setPassword(passwordEncoder.encode(input.getPassword()));
+        user.setEmail(input.getEmail());
+        user.setFirst_name(input.getFirstName());
+        user.setLast_name(input.getLastName());
         user.setLocation(null);
         user.setRole(Role.USER);
         user.setVerification_code(generateVerificationCode());

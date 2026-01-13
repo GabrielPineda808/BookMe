@@ -9,6 +9,7 @@ import com.example.book.response.BookingResponse;
 import com.example.book.response.ServiceResponse;
 import com.example.book.service.BookingService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,12 +22,9 @@ import java.util.List;
 @RequestMapping("/bookings")
 @PreAuthorize("hasRole('ROLE_USER')")
 @CrossOrigin
+@AllArgsConstructor
 public class BookingController {
     private final BookingService bookingService;
-
-    public BookingController(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
 
     @PostMapping("/book")
     public ResponseEntity<?> bookService(@Valid @RequestBody BookingDto input, @AuthenticationPrincipal(expression = "username") String email){

@@ -25,19 +25,4 @@ public class ChangePasswordDto {
     )
     private String newPassword;
 
-    public @NotBlank(message = "Old password is required") String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(@NotBlank(message = "Old password is required") String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
-
-    public @NotBlank(message = "New password is required") String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(@NotBlank(message = "New password is required") String newPassword) {
-        this.newPassword = newPassword;
-    }
 }
