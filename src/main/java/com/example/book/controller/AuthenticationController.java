@@ -7,6 +7,11 @@ import com.example.book.model.User;
 import com.example.book.repository.UserRepository;
 import com.example.book.response.LoginResponse;
 import com.example.book.service.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -25,6 +30,7 @@ import java.util.Map;
 @RestController
 @CrossOrigin(origins ={"http://localhost:5173", "http://localhost:3000"})
 @AllArgsConstructor
+@Tag(name = "Authentication", description = "User registration, login, and verification")
 public class AuthenticationController {
     private final JwtService jwtService;
     private final AuthenticationService authenticationService;
@@ -34,6 +40,11 @@ public class AuthenticationController {
     private final PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
+    @Operation(summary = "Login", description = "Authenticate user and return JWT")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Authenticated"),
+            @ApiResponse(responseCode = "400", description = "Invalid credentials", content = @Content)
+    })
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginUserDto loginUserDto){
         User authenticatedUser = authenticationService.authenticate(loginUserDto);
         String jwtToken = jwtService.generateToken(authenticatedUser);
@@ -42,12 +53,22 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
+    @Operation(summary = "Sign up", description = "Register a new user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Registered"),
+            @ApiResponse(responseCode = "400", description = "Validation failed", content = @Content)
+    })
     public ResponseEntity<UserDto> register(@Valid @RequestBody RegisterUserDto registerUserDto){
         User registeredUser = authenticationService.signup(registerUserDto);
         return ResponseEntity.ok(UserDto.from(registeredUser));
     }
 
     @PostMapping("/verify")
+    @Operation(summary = "Verify account", description = "Verify a user with a code")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Verified"),
+            @ApiResponse(responseCode = "400", description = "Invalid/expired code", content = @Content)
+    })
     public ResponseEntity<?> verifyUser(@Valid @RequestBody VerifyUserDto verifyUserDto){
         try {
             authenticationService.verifyUser(verifyUserDto);
@@ -58,6 +79,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/resend")
+    @Operation(summary = "Resend verification", description = "Resend verification code")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Resent"),
+            @ApiResponse(responseCode = "400", description = "Request failed", content = @Content)
+    })
     public ResponseEntity<?> resend(@RequestBody ResendEmailRequestDto input){
         try {
             authenticationService.resendVerification(input);
@@ -70,12 +96,22 @@ public class AuthenticationController {
     //change password where the user passes in old password and then new pasword plus password confirmation then we change it
     //front end will have to send encoded password
     @PutMapping("/change-password")
+    @Operation(summary = "Change password", description = "Change password for the current user")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password changed"),
+            @ApiResponse(responseCode = "400", description = "Validation failed", content = @Content)
+    })
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordDto input, @AuthenticationPrincipal(expression = "username") String email){
         authenticationService.changePassword(input, email);
         return ResponseEntity.ok().body("Password Changed");
     }
 
     @PostMapping("/forgot")
+    @Operation(summary = "Forgot password", description = "Send reset instructions if account exists")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Instruction sent (or noop)"),
+            @ApiResponse(responseCode = "400", description = "Request failed", content = @Content)
+    })
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> input) {
         if (input.get("email") == null) return ResponseEntity.ok(Map.of("message","If an account exists, we've sent instructions."));
 
@@ -106,6 +142,11 @@ public class AuthenticationController {
     }
 
     @PostMapping("/reset")
+    @Operation(summary = "Reset password", description = "Reset password using a token")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Password reset"),
+            @ApiResponse(responseCode = "400", description = "Invalid token/email", content = @Content)
+    })
     public ResponseEntity<?> resetPassword(@RequestBody ResetDto dto) {
         String email = dto.getEmail().trim().toLowerCase();
         User user = userRepository.findByEmailIgnoreCase(email)
